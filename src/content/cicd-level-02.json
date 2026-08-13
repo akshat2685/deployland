@@ -1,0 +1,28 @@
+{
+  "id": "cicd-02-continuous-integration",
+  "courseId": "cicd",
+  "index": 2,
+  "tier": "free",
+  "archetype": "GRAPH_BUILD",
+  "narrative": {
+    "intro": [{ "speaker": "FOREMAN NIX", "text": "Three branch lines are converging. Keep every change on one tested integration route." }],
+    "success": [{ "speaker": "FOREMAN NIX", "text": "The merge controller has stabilized CI Valley. Production District is visible across the water." }],
+    "failure": [{ "speaker": "FOREMAN NIX", "text": "An isolated branch drifted away from the shared release line." }]
+  },
+  "targetMisconception": "Merge at the end is fine.",
+  "initialState": {
+    "nodes": [], "edges": [], "runIndex": 0, "outcome": "idle",
+    "status": { "SOURCE": "idle", "BUILD": "idle", "TEST": "idle", "PACKAGE": "idle", "DEPLOY": "idle" }
+  },
+  "palette": ["SOURCE", "BUILD", "TEST", "PACKAGE", "DEPLOY"],
+  "rules": ["Each change joins the shared pipeline", "Tests run before the shared artifact is released"],
+  "win": ["All branch changes integrate through one tested path"],
+  "fail": ["A branch bypasses the test gate"],
+  "scoring": { "reliability": 100, "speed": 75, "cost": 70, "security": 70 },
+  "rewards": { "xp": 200, "unlocks": ["MERGE CONTROLLER"], "badge": "INTEGRATION ENGINEER" },
+  "engineerMode": {
+    "language": "yaml",
+    "artifact": "name: verify-pr\non:\n  pull_request:\njobs:\n  integration:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npm test\n      - run: npm run build",
+    "annotation": [{ "line": 3, "text": "Every pull request triggers the same checks before merging." }, { "line": 9, "text": "Integration is verified continuously, not delayed until release day." }]
+  }
+}

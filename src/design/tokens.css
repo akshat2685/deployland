@@ -1,0 +1,7 @@
+:root {
+  --void: #0b0420; --deep: #1a0b33; --violet: #2d1b4e; --panel: #4a2c6d;
+  --purple: #7b2d8e; --pink: #c2379a; --alert: #ff4d80; --orange: #ff7a3d;
+  --amber: #ffb454; --cream: #ffe0a3; --aqua: #2de0d0; --mint: #4ecdc4;
+  --cyan: #7ff5ff; --white: #f2f0ff;
+  color: var(--white); background: var(--void); font-family: "Courier New", monospace;
+}

@@ -1,0 +1,7 @@
+{
+  "id": "cicd",
+  "name": "CI VALLEY",
+  "description": "Restore the release districts and learn how a safe delivery system works.",
+  "price": { "inr": 499, "usd": 19 },
+  "freeLevelIds": ["cicd-01-broken-factory", "cicd-02-continuous-integration"]
+}
