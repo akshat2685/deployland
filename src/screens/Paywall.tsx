@@ -3,7 +3,7 @@ import { Course, getCourseLevels } from '../content/course-registry';
 import { useAuth } from '../store/auth';
 import { usePlayerStore } from '../store/player-store';
 import { analytics } from '../lib/analytics';
-import { PAYMENT_CONFIG } from '../config/payments';
+import { PAYMENT_CONFIG, verifyPaymentReference } from '../config/payments';
 import upiQrImage from '../assets/upi-qr.jpeg';
 import '../design/paywall.css';
 
@@ -35,24 +35,27 @@ export default function Paywall({ course, onCancel }: { course: Course, onCancel
   const handleVerifyPayment = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanUtr = utrNumber.trim();
-    if (!cleanUtr || cleanUtr.length < 6) {
-      setFeedback('ERROR: ENTER A VALID 12-DIGIT UPI UTR / TRANSACTION ID');
+    if (!cleanUtr) {
+      setFeedback('ERROR: PLEASE ENTER YOUR 12-DIGIT UPI UTR OR ACTIVATION KEY');
       return;
     }
 
     setVerifying(true);
-    setFeedback('CONTACTING UPI SETTLEMENT CIPHER...');
+    setFeedback('CONTACTING SBI UPI SETTLEMENT CIPHER...');
     analytics.track('upi_verification_attempted', { utr: cleanUtr, course_id: course.id });
 
     setTimeout(() => {
-      setFeedback('TRANSACTION VERIFIED // PERMISSION CLEARANCE GRANTED ✅');
-      usePlayerStore.getState().grantEntitlement(course.id);
-      
-      setTimeout(() => {
-        setVerifying(false);
-        onCancel();
-      }, 1200);
-    }, 1500);
+      const result = verifyPaymentReference(cleanUtr);
+      setVerifying(false);
+      setFeedback(result.message);
+
+      if (result.verified) {
+        usePlayerStore.getState().grantEntitlement(course.id);
+        setTimeout(() => {
+          onCancel();
+        }, 1500);
+      }
+    }, 1200);
   };
 
   const totalLevels = getCourseLevels(course.id).length;

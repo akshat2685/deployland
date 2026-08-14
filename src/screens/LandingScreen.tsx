@@ -6,9 +6,10 @@ interface LandingProps {
   onPlay: () => void;
   onBuy?: () => void;
   onLogin?: () => void;
+  isPremium?: boolean;
 }
 
-export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) {
+export default function LandingScreen({ onPlay, onBuy, onLogin, isPremium }: LandingProps) {
   const levels = getCourseLevels('cicd');
   const course = courses.find(c => c.id === 'cicd')!;
 
@@ -22,16 +23,25 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
             <nav className="landing-nav">
               <a href="#how">HOW IT WORKS</a>
               <a href="#map">CAMPAIGN MAP</a>
-              <a href="#pricing">FULL ACCESS</a>
+              <a href="#pricing">CLEARANCE</a>
               {onLogin && (
                 <button className="pixel-button small" onClick={onLogin}>
                   LOGIN 🔐
                 </button>
               )}
-              {onBuy && (
-                <button className="pixel-button small gold" onClick={onBuy}>
-                  BUY PASS 👑
-                </button>
+              {isPremium ? (
+                <span 
+                  className="pixel-button small gold" 
+                  style={{ cursor: 'default', pointerEvents: 'none', border: '2px solid var(--hazard-yellow)' }}
+                >
+                  👑 LIFETIME VIP PASS
+                </span>
+              ) : (
+                onBuy && (
+                  <button className="pixel-button small gold" onClick={onBuy}>
+                    BUY PASS 👑
+                  </button>
+                )
               )}
             </nav>
           </header>
@@ -45,12 +55,20 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
             
             <div className="hero-actions">
               <button className="pixel-button primary-cta" onClick={onPlay}>
-                PLAY FREE
+                {isPremium ? 'ENTER CAMPAIGN ══▶' : 'PLAY FREE'}
               </button>
-              {onBuy && (
+              {!isPremium && onBuy && (
                 <button className="pixel-button gold-cta" onClick={onBuy}>
                   UNLOCK FULL CAMPAIGN 👑
                 </button>
+              )}
+              {isPremium && (
+                <div 
+                  className="pixel-button small gold"
+                  style={{ cursor: 'default', pointerEvents: 'none', padding: '14px 20px', fontSize: '13px' }}
+                >
+                  👑 FULL ACCESS ACTIVE
+                </div>
               )}
               <a href="#how" className="pixel-button secondary-cta">
                 SEE HOW IT WORKS
@@ -90,7 +108,7 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
         <h3 className="section-title">CAMPAIGN DISTRICTS</h3>
         <div className="course-map">
           {levels.map((level, index) => {
-            const isFree = index < 2;
+            const isFree = index < 2 || isPremium;
             return (
               <div 
                 key={level.id} 
@@ -100,7 +118,7 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
                   else if (onBuy) onBuy();
                 }}
                 style={{ cursor: 'pointer' }}
-                title={isFree ? 'Click to Play Free' : 'Click to Unlock Full Campaign'}
+                title={isFree ? 'Click to Enter District' : 'Click to Unlock Full Campaign'}
               >
                 <div className="node-marker">{index + 1}</div>
                 <div className="node-info">
@@ -108,7 +126,7 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
                   <div className="node-archetype">{level.archetype}</div>
                 </div>
                 <div className="node-status">
-                  {isFree ? 'FREE PLAY' : 'LOCKED 🔒'}
+                  {isPremium ? 'AUTHORIZED 🚀' : isFree ? 'FREE PLAY' : 'LOCKED 🔒'}
                 </div>
               </div>
             );
@@ -119,10 +137,14 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
       <section id="pricing" className="landing-section pricing-section">
         <h3 className="section-title">ACQUISITION PROTOCOL</h3>
         <div className="pricing-card">
-          <div className="pricing-badge">LIFETIME ACCESS CLEARANCE</div>
+          <div className="pricing-badge">
+            {isPremium ? '✓ LIFETIME VIP CLEARANCE GRANTED' : 'LIFETIME ACCESS CLEARANCE'}
+          </div>
           <div className="pricing-course-title">{course.name.toUpperCase()}</div>
-          <div className="pricing-price">{course.price.inr} INR</div>
-          <div className="pricing-tagline">One-time payment • Lifetime access • All future updates</div>
+          <div className="pricing-price">{isPremium ? 'ACCESS ACTIVE' : `${course.price.inr} INR`}</div>
+          <div className="pricing-tagline">
+            {isPremium ? 'All 10 districts unlocked permanently for this account.' : 'One-time payment • Lifetime access • All future updates'}
+          </div>
 
           <div className="pricing-perks">
             <div className="perk-item">
@@ -143,12 +165,21 @@ export default function LandingScreen({ onPlay, onBuy, onLogin }: LandingProps) 
             </div>
           </div>
 
-          <button 
-            className="pixel-button primary-cta gold-full"
-            onClick={onBuy || onPlay}
-          >
-            UNLOCK FULL CAMPAIGN NOW 👑
-          </button>
+          {isPremium ? (
+            <button 
+              className="pixel-button primary-cta gold-full"
+              onClick={onPlay}
+            >
+              ENTER PRODUCTION DISTRICT 🚀
+            </button>
+          ) : (
+            <button 
+              className="pixel-button primary-cta gold-full"
+              onClick={onBuy || onPlay}
+            >
+              UNLOCK FULL CAMPAIGN NOW 👑
+            </button>
+          )}
         </div>
       </section>
 

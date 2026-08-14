@@ -186,6 +186,9 @@ export default function App() {
     );
   }
 
+  const isVip = isLifetimeVip(user?.email);
+  const isPremium = isVip || entitlements.includes('cicd');
+
   if (screen === 'landing') {
     if (window.location.hash.match(/privacy|terms|legal|support/)) return <LegalScreen />;
     return (
@@ -197,13 +200,14 @@ export default function App() {
             onSuccess={() => setShowLogin(false)} 
           />
         )}
-        {showPaywall && <Paywall course={course} onCancel={() => setShowPaywall(false)} />}
+        {showPaywall && !isPremium && <Paywall course={course} onCancel={() => setShowPaywall(false)} />}
         <LandingScreen 
+          isPremium={isPremium}
           onPlay={() => {
             analytics.track('game_started');
             setScreen('boot');
           }} 
-          onBuy={() => {
+          onBuy={isPremium ? undefined : () => {
             analytics.track('paywall_viewed', { course_id: course.id, source: 'landing_page' });
             setShowPaywall(true);
           }}
@@ -247,8 +251,6 @@ export default function App() {
       />
     </>
   );
-
-  const isVip = isLifetimeVip(user?.email);
 
   return (
     <main className={`shell ${screen}`}>
