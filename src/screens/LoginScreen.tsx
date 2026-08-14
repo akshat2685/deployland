@@ -166,14 +166,14 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
                     onClick={() => { setAuthMode('login'); setStatusMsg(null); }}
                     style={{ flex: 1 }}
                   >
-                    🔐 OPERATOR LOGIN
+                    🔐 LOGIN
                   </button>
                   <button 
                     className={`pixel-button ${authMode === 'register' ? 'gold' : ''}`}
                     onClick={() => { setAuthMode('register'); setStatusMsg(null); }}
                     style={{ flex: 1 }}
                   >
-                    📝 REGISTER NEW CALLSIGN
+                    📝 REGISTER (FREE)
                   </button>
                 </div>
 
@@ -184,22 +184,22 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
                   disabled={loading}
                 >
                   <span className="git-icon">🐙</span>
-                  <span>AUTHENTICATE WITH GITHUB</span>
+                  <span>CONTINUE WITH GITHUB</span>
                 </button>
 
                 <div className="auth-divider">
-                  <span>OR {authMode === 'login' ? 'ENTER CALLSIGN & PASSCODE' : 'CREATE OPERATOR PASSCODE'}</span>
+                  <span>OR {authMode === 'login' ? 'SIGN IN WITH EMAIL' : 'CREATE FREE ACCOUNT (NO CODE NEEDED)'}</span>
                 </div>
 
                 {/* Email + Password Form */}
                 <form className="email-auth-form" onSubmit={handleSubmit}>
                   {authMode === 'register' && (
                     <div className="input-group">
-                      <label htmlFor="operator-name">CALLSIGN / CODENAME (OPTIONAL):</label>
+                      <label htmlFor="operator-name">PLAYER CALLSIGN / NAME (OPTIONAL):</label>
                       <input 
                         id="operator-name"
                         type="text" 
-                        placeholder="e.g. ARCHITECT_AKSHAT" 
+                        placeholder="e.g. Alex or Matrix" 
                         value={callsignName}
                         onChange={(e) => setCallsignName(e.target.value)}
                         disabled={loading}
@@ -208,11 +208,11 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
                   )}
 
                   <div className="input-group">
-                    <label htmlFor="operator-email">OPERATOR EMAIL:</label>
+                    <label htmlFor="operator-email">EMAIL ADDRESS:</label>
                     <input 
                       id="operator-email"
                       type="email" 
-                      placeholder="engineer@deployland.game" 
+                      placeholder="you@example.com" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={loading}
@@ -223,7 +223,9 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
 
                   <div className="input-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <label htmlFor="operator-password">SECURITY PASSCODE (PASSWORD):</label>
+                      <label htmlFor="operator-password">
+                        {authMode === 'login' ? 'PASSWORD:' : 'CREATE PASSWORD:'}
+                      </label>
                       <button 
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
@@ -235,7 +237,7 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
                     <input 
                       id="operator-password"
                       type={showPassword ? 'text' : 'password'} 
-                      placeholder="Enter secret passcode..." 
+                      placeholder={authMode === 'login' ? 'Enter your password...' : 'Create a password (min 4 characters)...'} 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={loading}
@@ -250,11 +252,17 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
                     disabled={loading}
                   >
                     {loading 
-                      ? 'PROCESSING CIPHER...' 
+                      ? 'PROCESSING...' 
                       : authMode === 'login' 
-                        ? 'AUTHENTICATE & ENTER ══▶' 
-                        : 'REGISTER & ACTIVATE CALLSIGN ══▶'}
+                        ? 'SIGN IN ══▶' 
+                        : 'CREATE FREE ACCOUNT ══▶'}
                   </button>
+
+                  {authMode === 'register' && (
+                    <div style={{ fontSize: '11px', color: 'var(--energy-active-cyan)', textAlign: 'center', marginTop: '6px' }}>
+                      ✨ Free account includes free missions, save games, and profile stats.
+                    </div>
+                  )}
                 </form>
 
                 {statusMsg && (
