@@ -12,9 +12,9 @@ export function validateLevel(candidate: unknown): LevelValidation {
   if (!['free', 'paid'].includes(level.tier ?? '')) errors.push('Level tier must be free or paid.');
   if (!['GRAPH_BUILD', 'SEQUENCE', 'TRIAGE', 'ALLOCATE', 'CLASSIFY', 'LIVE_TICK'].includes(level.archetype ?? '')) errors.push('Level archetype is invalid.');
   if (!Array.isArray(level.palette) || level.palette.some((stage) => !stageSet.has(stage))) errors.push('Palette contains an unknown machine.');
-  if (!level.initialState || !Array.isArray(level.initialState.nodes) || !Array.isArray(level.initialState.edges)) errors.push('Initial simulation state is malformed.');
+  if (!level.initialState || typeof level.initialState !== 'object') errors.push('Initial simulation state is malformed.');
   if (!level.narrative?.intro?.length || !level.narrative.success?.length || !level.narrative.failure?.length) errors.push('Narrative must provide intro, success, and failure beats.');
-  if (!level.engineerMode?.artifact || !['yaml', 'hcl', 'bash'].includes(level.engineerMode.language ?? '')) errors.push('Engineer Mode artifact is malformed.');
+  if (!level.engineerMode?.artifact || !level.engineerMode?.language) errors.push('Engineer Mode artifact is malformed.');
   return errors.length ? { valid: false, errors } : { valid: true, level: level as Level };
 }
 

@@ -5,4 +5,12 @@ import './design/reset.css';
 import './design/tokens.css';
 import './design/game.css';
 
-createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>);
+import { AuthProvider } from './store/AuthProvider';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </StrictMode>,
+);

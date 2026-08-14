@@ -1,4 +1,8 @@
-export const STAGES = ['SOURCE', 'BUILD', 'TEST', 'PACKAGE', 'DEPLOY'] as const;
+export const STAGES = [
+  'SOURCE', 'BUILD', 'TEST', 'ARTIFACT', 'PACKAGE', 'DEPLOY', 
+  'DEPS', 'COMPILE', 'STAGING', 'PROD', 'DATABASE', 'CACHE',
+  'MAIN_BRANCH', 'FEATURE_BRANCH', 'MERGE_GATE', 'TEST_SUITE'
+] as const;
 
 export type StageId = (typeof STAGES)[number];
 export type Archetype = 'GRAPH_BUILD' | 'SEQUENCE' | 'TRIAGE' | 'ALLOCATE' | 'CLASSIFY' | 'LIVE_TICK';
@@ -41,12 +45,25 @@ export interface Level {
   archetype: Archetype;
   narrative: { intro: DialogueBeat[]; success: DialogueBeat[]; failure: DialogueBeat[] };
   targetMisconception: string;
-  initialState: SimState;
+  initialState: any; // Updated to support SimState, TriageState, AllocateState, ClassifyState, etc.
   palette: StageId[];
   rules: string[];
   win: string[];
   fail: string[];
   scoring: { reliability: number; speed: number; cost: number; security: number };
   rewards: { xp: number; unlocks: string[]; badge?: string };
-  engineerMode: { artifact: string; language: 'yaml' | 'hcl' | 'bash'; annotation: Array<{ line: number; text: string }> };
+  engineerMode: { 
+    concept?: string;
+    whatYouDid?: string;
+    realWorld?: string;
+    artifact: string; 
+    language: string;
+    annotation?: Array<{ line: number; text: string }>;
+    keyTakeaways?: string[];
+  };
+  world?: {
+    district: string;
+    restoration: number;
+  };
+  unlocksNext?: string[];
 }

@@ -1,0 +1,213 @@
+/* Paywall Screen (Game World Gate) */
+.paywall-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(0, 0, 0, 0.88); 
+  z-index: 99999; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  overflow-y: auto; 
+  padding: 20px; 
+  font-family: var(--font-body); 
+  box-sizing: border-box;
+}
+
+/* The Giant Gate */
+.pixel-gate { 
+  position: relative; 
+  width: 680px; 
+  max-width: 95vw; 
+  max-height: 90vh; 
+  overflow-y: auto; 
+  background: var(--machine-metal-dark); 
+  border: 8px solid var(--ui-ink); 
+  box-shadow: 
+    inset 4px 4px 0 var(--machine-metal-light),
+    inset -4px -4px 0 var(--machine-metal-shadow),
+    16px 16px 0 rgba(0, 0, 0, 0.8); 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  z-index: 100000; 
+  box-sizing: border-box;
+}
+
+.gate-header { 
+  width: 100%; 
+  background: var(--ui-ink); 
+  padding: 20px; 
+  text-align: center; 
+  color: var(--energy-danger-red); 
+  font-family: var(--font-game-display); 
+  font-size: 24px; 
+  letter-spacing: 2px; 
+  text-shadow: 2px 2px 0 #000; 
+  border-bottom: 4px solid var(--machine-metal-shadow); 
+  position: relative;
+  box-sizing: border-box;
+}
+
+.gate-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: var(--energy-danger-red);
+  color: #fff;
+  border: 2px solid var(--ui-ink);
+  font-family: var(--font-game-display);
+  font-size: 14px;
+  padding: 4px 8px;
+  cursor: pointer;
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,0.4);
+}
+.gate-close-btn:hover {
+  background: #ff6060;
+  transform: translateY(1px);
+}
+
+.gate-subheader { 
+  color: var(--hazard-yellow); 
+  font-size: 13px; 
+  margin-top: 6px; 
+  letter-spacing: 1px; 
+  text-shadow: none; 
+}
+
+.gate-body { 
+  padding: 32px 24px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center; 
+  width: 100%; 
+  box-sizing: border-box; 
+  gap: 20px;
+}
+
+.gate-message { 
+  color: var(--ui-paper-warm); 
+  font-family: var(--font-game-clean); 
+  font-size: 17px; 
+  line-height: 1.5; 
+  max-width: 540px; 
+  margin: 0;
+}
+.gate-message strong { 
+  color: var(--hazard-yellow); 
+  font-family: var(--font-game-display); 
+  font-size: 18px; 
+}
+
+.gate-features { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+  text-align: left; 
+  background: rgba(0,0,0,0.6); 
+  border: 4px solid var(--ui-ink); 
+  padding: 18px 24px; 
+  width: 100%; 
+  max-width: 480px; 
+  box-sizing: border-box;
+}
+
+.gate-feature-item { 
+  color: var(--energy-active-cyan); 
+  font-family: var(--font-game-display); 
+  font-size: 12px; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+}
+.gate-feature-icon { 
+  font-size: 18px; 
+}
+
+.gate-price-tag { 
+  background: var(--ui-ink); 
+  border: 4px solid var(--hazard-yellow); 
+  padding: 12px 24px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 4px; 
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.6); 
+}
+.price-label { 
+  color: var(--machine-metal-light); 
+  font-family: var(--font-game-display); 
+  font-size: 10px; 
+  letter-spacing: 1px;
+}
+.price-amount { 
+  color: var(--hazard-yellow); 
+  font-family: var(--font-game-display); 
+  font-size: 28px; 
+}
+
+.gate-actions { 
+  display: flex; 
+  gap: 16px; 
+  width: 100%; 
+  max-width: 480px; 
+  flex-wrap: wrap;
+}
+
+.gate-btn { 
+  flex: 1; 
+  min-width: 180px;
+  padding: 16px; 
+  font-family: var(--font-game-display); 
+  font-size: 14px; 
+  cursor: pointer; 
+  text-transform: uppercase; 
+  transition: transform 0.1s; 
+  border: 4px solid var(--ui-ink);
+}
+
+.gate-btn.primary { 
+  background: var(--btn-gold-base); 
+  color: var(--ui-ink); 
+  box-shadow: 
+    inset 3px 3px 0 var(--btn-gold-top),
+    inset -3px -3px 0 var(--btn-gold-shadow),
+    4px 4px 0 var(--ui-ink); 
+}
+.gate-btn.primary:hover:not(:disabled) { 
+  background: var(--btn-gold-top);
+  transform: translateY(2px) translateX(2px); 
+  box-shadow: 
+    inset 3px 3px 0 #fff,
+    inset -3px -3px 0 var(--btn-gold-shadow),
+    2px 2px 0 var(--ui-ink); 
+}
+
+.gate-btn.secondary { 
+  background: var(--machine-metal-shadow); 
+  color: var(--ui-paper); 
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-light),
+    inset -3px -3px 0 #000,
+    4px 4px 0 var(--ui-ink); 
+}
+.gate-btn.secondary:hover { 
+  background: var(--machine-metal-dark);
+  transform: translateY(2px) translateX(2px); 
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-light),
+    inset -3px -3px 0 #000,
+    2px 2px 0 var(--ui-ink); 
+}
+
+/* Environmental effects */
+.gate-lock-bars { 
+  position: absolute; 
+  top: 0; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,0,0,0.3) 60px, rgba(0,0,0,0.3) 80px); 
+  pointer-events: none; 
+  z-index: -1; 
+}

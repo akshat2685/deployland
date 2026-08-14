@@ -5,7 +5,25 @@ import { simulationReducer } from '../engine/reducer';
 import { usePlayerStore } from '../store/player-store';
 import type { StageId } from '../engine/types';
 
-const stageGlyph: Record<StageId, string> = { SOURCE: '01', BUILD: '02', TEST: '03', PACKAGE: '04', DEPLOY: '05' };
+const stageGlyph: Record<string, string> = { SOURCE: '01', BUILD: '02', TEST: '03', PACKAGE: '04', DEPLOY: '05', DEPS: '06', COMPILE: '07', STAGING: '08', PROD: '09', ARTIFACT: '10', DATABASE: '11', CACHE: '12', MAIN_BRANCH: '13', FEATURE_BRANCH: '14', MERGE_GATE: '15', TEST_SUITE: '16' };
+const nodeColors: Record<string, string> = {
+  SOURCE: 'var(--mint)',
+  BUILD: 'var(--cyan)',
+  TEST: 'var(--amber)',
+  PACKAGE: 'var(--cream)',
+  DEPLOY: 'var(--alert)',
+  DEPS: 'var(--mint)',
+  COMPILE: 'var(--amber)',
+  STAGING: 'var(--cyan)',
+  PROD: 'var(--mint)',
+  ARTIFACT: 'var(--cream)',
+  DATABASE: 'var(--alert)',
+  CACHE: 'var(--amber)',
+  MAIN_BRANCH: 'var(--mint)',
+  FEATURE_BRANCH: 'var(--cyan)',
+  MERGE_GATE: 'var(--amber)',
+  TEST_SUITE: 'var(--cream)'
+};
 const stages: StageId[] = ['SOURCE', 'BUILD', 'TEST', 'PACKAGE', 'DEPLOY'];
 
 export default function App() {
@@ -104,10 +122,10 @@ export default function App() {
     </header>
 
     <footer className="control-deck panel">
-      <div className="objective"><span>BREAK THIS BELIEF</span><strong>â€œ{level01.targetMisconception}â€</strong></div>
+      <div className="objective"><span>BREAK THIS BELIEF</span><strong>“{level01.targetMisconception}”</strong></div>
       <button className="lever" disabled={state.outcome === 'running'} onClick={() => { dispatch({ type: 'RESET_RUN' }); window.setTimeout(() => dispatch({ type: 'RUN_PIPELINE' }), 0); }}><b>RUN</b><span>PIPELINE</span></button>
       <button className="terminal-button" onClick={() => setEngineerMode((value) => !value)}>ENGINEER MODE</button>
     </footer>
-    {engineerMode && <section className="engineer panel"><button onClick={() => setEngineerMode(false)}>Ã— CLOSE</button><div><span>READ-ONLY ARTIFACT // {level01.engineerMode.language.toUpperCase()}</span><h2>WHAT YOU JUST WIRED</h2><pre>{level01.engineerMode.artifact}</pre></div><aside>{level01.engineerMode.annotation.map((note) => <p key={note.line}><b>LINE {note.line}</b>{note.text}</p>)}</aside></section>}
+    {engineerMode && <section className="engineer panel"><button onClick={() => setEngineerMode(false)}>× CLOSE</button><div><span>READ-ONLY ARTIFACT // {level01.engineerMode.language.toUpperCase()}</span><h2>WHAT YOU JUST WIRED</h2><pre>{level01.engineerMode.artifact}</pre></div><aside>{(level01.engineerMode?.annotation || []).map((note) => <p key={note.line}><b>LINE {note.line}</b>{note.text}</p>)}</aside></section>}
   </main>;
 }

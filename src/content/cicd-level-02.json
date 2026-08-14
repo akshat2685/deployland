@@ -5,24 +5,130 @@
   "tier": "free",
   "archetype": "GRAPH_BUILD",
   "narrative": {
-    "intro": [{ "speaker": "FOREMAN NIX", "text": "Three branch lines are converging. Keep every change on one tested integration route." }],
-    "success": [{ "speaker": "FOREMAN NIX", "text": "The merge controller has stabilized CI Valley. Production District is visible across the water." }],
-    "failure": [{ "speaker": "FOREMAN NIX", "text": "An isolated branch drifted away from the shared release line." }]
+    "intro": [
+      {
+        "speaker": "FOREMAN NIX",
+        "text": "Two branch lines are converging at the Railway Hub. Ensure all feature commits merge through automated tests before packaging."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "FOREMAN NIX",
+        "text": "Continuous Integration stabilized! Multiple branches now merge and test automatically on every commit."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "FOREMAN NIX",
+        "text": "An isolated branch bypassed the integration test suite. Merge and test before release."
+      }
+    ]
   },
   "targetMisconception": "Merge at the end is fine.",
   "initialState": {
-    "nodes": [], "edges": [], "runIndex": 0, "outcome": "idle",
-    "status": { "SOURCE": "idle", "BUILD": "idle", "TEST": "idle", "PACKAGE": "idle", "DEPLOY": "idle" }
+    "nodes": [
+      {
+        "id": "MAIN_BRANCH",
+        "type": "Branch Repository",
+        "description": "The trunk repository branch containing production-ready code."
+      },
+      {
+        "id": "FEATURE_BRANCH",
+        "type": "Developer Branch",
+        "description": "An active feature branch with pending developer changes."
+      },
+      {
+        "id": "MERGE_GATE",
+        "type": "Automated Merge Hub",
+        "description": "Integrates branch code and verifies merge conflicts automatically."
+      },
+      {
+        "id": "TEST_SUITE",
+        "type": "Automated Test Suite",
+        "description": "Runs integration and regression tests on the merged code."
+      },
+      {
+        "id": "PACKAGE",
+        "type": "Artifact Container",
+        "description": "Packages tested artifacts for production rollout."
+      },
+      {
+        "id": "DEPLOY",
+        "type": "Launch Tower",
+        "description": "Dispatches validated releases into live production traffic."
+      }
+    ],
+    "edges": [],
+    "requiredPaths": [
+      { "from": "MAIN_BRANCH", "to": "MERGE_GATE" },
+      { "from": "FEATURE_BRANCH", "to": "MERGE_GATE" },
+      { "from": "MERGE_GATE", "to": "TEST_SUITE" },
+      { "from": "TEST_SUITE", "to": "PACKAGE" },
+      { "from": "PACKAGE", "to": "DEPLOY" }
+    ],
+    "forbiddenPaths": [
+      { "from": "FEATURE_BRANCH", "to": "DEPLOY" },
+      { "from": "FEATURE_BRANCH", "to": "PACKAGE" },
+      { "from": "MAIN_BRANCH", "to": "DEPLOY" }
+    ],
+    "placedNodes": ["MAIN_BRANCH", "FEATURE_BRANCH"],
+    "outcome": "idle"
   },
-  "palette": ["SOURCE", "BUILD", "TEST", "PACKAGE", "DEPLOY"],
-  "rules": ["Each change joins the shared pipeline", "Tests run before the shared artifact is released"],
-  "win": ["All branch changes integrate through one tested path"],
-  "fail": ["A branch bypasses the test gate"],
-  "scoring": { "reliability": 100, "speed": 75, "cost": 70, "security": 70 },
-  "rewards": { "xp": 200, "unlocks": ["MERGE CONTROLLER"], "badge": "INTEGRATION ENGINEER" },
+  "palette": [
+    "MAIN_BRANCH",
+    "FEATURE_BRANCH",
+    "MERGE_GATE",
+    "TEST_SUITE",
+    "PACKAGE",
+    "DEPLOY"
+  ],
+  "rules": [
+    "Both branches must integrate through MERGE_GATE",
+    "MERGE_GATE → TEST_SUITE → PACKAGE → DEPLOY"
+  ],
+  "win": [
+    "All branch changes integrate through one tested path"
+  ],
+  "fail": [
+    "A branch bypasses the test gate"
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 85,
+    "cost": 80,
+    "security": 85
+  },
+  "rewards": {
+    "xp": 150,
+    "unlocks": [
+      "cicd-03-test-lab"
+    ]
+  },
   "engineerMode": {
+    "concept": "Continuous Integration",
+    "whatYouDid": "You built an automated integration pipeline that merges and tests multiple branches continuously.",
+    "keyTakeaways": [
+      "Continuous Integration (CI) prevents merge hell by testing every branch upon commit.",
+      "Never allow unmerged feature branches to bypass verification gates directly into production."
+    ],
     "language": "yaml",
-    "artifact": "name: verify-pr\non:\n  pull_request:\njobs:\n  integration:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npm test\n      - run: npm run build",
-    "annotation": [{ "line": 3, "text": "Every pull request triggers the same checks before merging." }, { "line": 9, "text": "Integration is verified continuously, not delayed until release day." }]
-  }
+    "artifact": "on:\n  pull_request:\n    branches: [ main ]\n\njobs:\n  merge_and_test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm test\n      - run: npm run build",
+    "annotation": [
+      {
+        "line": 2,
+        "text": "Every pull request triggers continuous integration against the main branch."
+      },
+      {
+        "line": 8,
+        "text": "Automated test suites gate packaging and deployment."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-02",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-03-test-lab"
+  ]
 }

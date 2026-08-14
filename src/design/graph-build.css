@@ -1,0 +1,634 @@
+/* ==========================================================================
+   DEPLOYLAND GRAPH_BUILD: 16-BIT FACTORY FLOOR GAMEPLAY
+   ========================================================================== */
+
+/* Main Factory Board Container */
+.graph-build-game-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: calc(100vh - 120px);
+  position: relative;
+  background: var(--world-night-sky);
+  border: 6px solid var(--ui-ink);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 8px 8px 0 rgba(0, 0, 0, 0.6);
+  margin: 0 16px 16px 16px;
+  overflow: hidden;
+}
+
+/* Mission Directive Header Banner */
+.mission-directive-banner {
+  background: var(--machine-metal-dark);
+  border-bottom: 5px solid var(--ui-ink);
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 30;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.directive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.directive-title {
+  font-family: var(--font-game-clean);
+  font-size: 16px;
+  color: var(--ui-paper-warm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.directive-title strong {
+  color: var(--hazard-yellow);
+  font-family: var(--font-game-display);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.directive-tools {
+  display: flex;
+  gap: 10px;
+}
+
+/* Steps Row */
+.directive-steps-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid var(--ui-ink);
+}
+
+.directive-step-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--machine-metal-light);
+  padding: 4px 8px;
+}
+.directive-step-badge.active {
+  color: var(--hazard-yellow);
+  background: rgba(248, 216, 32, 0.15);
+  border: 1px solid var(--hazard-yellow);
+}
+.directive-step-badge.done {
+  color: var(--energy-success-green);
+}
+
+.step-num {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ui-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+}
+.directive-step-badge.active .step-num { background: var(--hazard-yellow); color: #000; }
+.directive-step-badge.done .step-num { background: var(--energy-success-green); color: #000; }
+
+.step-arrow {
+  color: var(--machine-metal-shadow);
+  font-size: 12px;
+}
+
+.active-wiring-prompt {
+  background: var(--ui-ink);
+  border: 2px solid var(--energy-active-cyan);
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--energy-active-cyan);
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  animation: prompt-pulse 1s infinite alternate;
+}
+.active-wiring-prompt strong { color: var(--hazard-yellow); }
+
+@keyframes prompt-pulse {
+  from { box-shadow: 0 0 4px var(--energy-active-cyan); }
+  to { box-shadow: 0 0 12px var(--energy-active-cyan); }
+}
+
+/* Upper Factory Floor Scene (Gameplay Area) */
+.factory-floor-viewport {
+  flex: 1;
+  position: relative;
+  min-height: 440px;
+  background: 
+    linear-gradient(rgba(12, 18, 25, 0.75), rgba(12, 18, 25, 0.75)),
+    repeating-linear-gradient(0deg, #1b2636 0px, #1b2636 32px, #141d2a 32px, #141d2a 64px),
+    repeating-linear-gradient(90deg, #1b2636 0px, #1b2636 32px, #141d2a 32px, #141d2a 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 32px 16px;
+}
+
+/* Background Factory Infrastructure Details */
+.factory-girders {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: var(--hazard-stripe);
+  border-bottom: 4px solid var(--ui-ink);
+  z-index: 2;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.factory-pipes-bg {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: repeating-linear-gradient(90deg, var(--pipe-green-base) 0px, var(--pipe-green-base) 120px, var(--pipe-green-dark) 120px, var(--pipe-green-dark) 130px);
+  border-top: 2px solid var(--ui-ink);
+  border-bottom: 2px solid var(--ui-ink);
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* SVG Pipe Connections Layer */
+.factory-conduits-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Pipe SVG Styles */
+.conduit-shadow {
+  stroke: rgba(0, 0, 0, 0.8);
+  stroke-width: 22;
+  fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+
+.conduit-pipe {
+  stroke: var(--machine-metal-base);
+  stroke-width: 14;
+  fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+
+.conduit-core {
+  stroke: var(--machine-metal-highlight);
+  stroke-width: 4;
+  fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+
+.conduit-active .conduit-core {
+  stroke: var(--energy-active-cyan);
+  stroke-dasharray: 12 16;
+  animation: energy-flow 0.6s linear infinite;
+}
+
+.conduit-invalid .conduit-pipe {
+  stroke: var(--energy-danger-red);
+  animation: spark-pulse 0.2s infinite;
+}
+.conduit-invalid .conduit-core {
+  stroke: #ffffff;
+  stroke-dasharray: 6 8;
+  animation: energy-flow 0.2s linear infinite reverse;
+}
+
+@keyframes energy-flow {
+  from { stroke-dashoffset: 28; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes spark-pulse {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px var(--energy-danger-red)); }
+  50% { opacity: 0.6; filter: none; }
+}
+
+/* Factory Floor Assembly Grid (Chunky Machines) */
+.factory-assembly-line {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* Individual Physical Machine Game Object */
+.factory-machine-node {
+  background: var(--machine-metal-dark);
+  border: 4px solid var(--ui-ink);
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-highlight),
+    inset -3px -3px 0 var(--machine-metal-shadow),
+    8px 8px 0 rgba(0, 0, 0, 0.7);
+  width: 164px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transform: translateY(0);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+}
+
+.factory-machine-node:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-highlight),
+    inset -3px -3px 0 var(--machine-metal-shadow),
+    8px 12px 0 rgba(0, 0, 0, 0.8);
+}
+
+/* Node Selection States */
+.factory-machine-node.selected {
+  border-color: var(--energy-active-cyan);
+  box-shadow: 
+    0 0 0 3px var(--energy-active-cyan),
+    inset 3px 3px 0 #ffffff,
+    inset -3px -3px 0 var(--machine-metal-shadow),
+    8px 8px 0 rgba(0, 0, 0, 0.8);
+}
+
+.factory-machine-node.connecting-source {
+  border-color: var(--hazard-yellow);
+  animation: connect-pulse 0.8s infinite alternate;
+}
+
+.factory-machine-node.connecting-target-hint {
+  outline: 3px dashed var(--energy-active-cyan);
+  outline-offset: 4px;
+}
+
+.factory-machine-node.node-running {
+  animation: machine-vibrate 0.15s infinite;
+  border-color: var(--energy-success-green);
+}
+
+@keyframes connect-pulse {
+  from { box-shadow: 0 0 0 3px var(--hazard-yellow), 6px 6px 0 #000; }
+  to { box-shadow: 0 0 0 6px var(--hazard-yellow), 6px 6px 0 #000; }
+}
+
+@keyframes machine-vibrate {
+  0% { transform: translate(1px, 1px); }
+  25% { transform: translate(-1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, -1px); }
+  100% { transform: translate(1px, 1px); }
+}
+
+/* Machine Sprite Graphics */
+.machine-sprite-container {
+  width: 72px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0;
+  position: relative;
+}
+
+.machine-nameplate {
+  background: var(--hazard-yellow);
+  border: 2px solid var(--ui-ink);
+  color: var(--ui-ink);
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  letter-spacing: 0.5px;
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #aa8800;
+  text-align: center;
+  width: calc(100% - 8px);
+}
+
+.machine-status-lamp {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 2px solid var(--ui-ink);
+}
+.machine-status-lamp.green { background: var(--energy-success-green); box-shadow: 0 0 6px var(--energy-success-green); }
+.machine-status-lamp.yellow { background: var(--hazard-yellow); box-shadow: 0 0 6px var(--hazard-yellow); }
+.machine-status-lamp.red { background: var(--energy-danger-red); box-shadow: 0 0 6px var(--energy-danger-red); }
+
+/* Quick Connect Button Directly on Node */
+.machine-quick-action {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.node-connect-btn {
+  width: 100%;
+  padding: 5px 2px;
+  background: var(--machine-metal-shadow);
+  color: var(--energy-active-cyan);
+  border: 2px solid var(--ui-ink);
+  font-family: var(--font-game-display);
+  font-size: 9px;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 var(--machine-metal-light), 2px 2px 0 #000;
+  letter-spacing: 0.5px;
+}
+.node-connect-btn:hover {
+  background: var(--machine-metal-dark);
+  color: #fff;
+  transform: translateY(1px);
+}
+.node-connect-btn.cancel {
+  background: var(--energy-danger-red);
+  color: #fff;
+}
+.node-connect-btn.target {
+  background: var(--energy-active-cyan);
+  color: #000;
+  animation: connect-pulse 0.6s infinite alternate;
+}
+
+/* Quick Port Connect Buttons */
+.machine-port {
+  position: absolute;
+  width: 20px;
+  height: 12px;
+  background: var(--conduit-copper-base);
+  border: 2px solid var(--ui-ink);
+  box-shadow: inset 1px 1px 0 var(--conduit-copper-top), inset -1px -1px 0 var(--conduit-copper-dark);
+}
+.machine-port.top { top: -8px; left: calc(50% - 10px); }
+.machine-port.bottom { bottom: -8px; left: calc(50% - 10px); }
+
+/* Machine Removal Button */
+.machine-remove-btn {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 22px;
+  height: 22px;
+  background: var(--btn-red-base);
+  border: 2px solid var(--ui-ink);
+  color: #fff;
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+  z-index: 12;
+}
+.machine-remove-btn:hover {
+  background: var(--btn-red-top);
+  transform: scale(1.1);
+}
+
+/* Live Pipeline Execution Terminal Overlay */
+.factory-execution-terminal {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  right: 20px;
+  background: #080e14;
+  border: 4px solid var(--energy-active-cyan);
+  box-shadow: 0 0 20px rgba(56, 232, 248, 0.4), inset 0 0 10px #000;
+  padding: 12px 18px;
+  z-index: 100;
+  font-family: monospace;
+  animation: terminal-glow 1s infinite alternate;
+}
+
+.terminal-log-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--energy-active-cyan);
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--machine-metal-shadow);
+  padding-bottom: 4px;
+}
+
+.terminal-log-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.log-line {
+  color: var(--energy-success-green);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+@keyframes terminal-glow {
+  from { border-color: var(--energy-active-cyan); }
+  to { border-color: var(--energy-success-green); }
+}
+
+/* Contextual In-World Machine Inspector Modal / Callout */
+.factory-inspector-toast {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: var(--casing-parchment);
+  border: 4px solid var(--ui-ink);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.7);
+  padding: 12px 16px;
+  max-width: 280px;
+  z-index: 40;
+  color: var(--ui-ink);
+  font-family: var(--font-game-clean);
+}
+
+.inspector-title {
+  font-family: var(--font-game-display);
+  font-size: 12px;
+  color: var(--world-dirt-dark);
+}
+
+.inspector-type {
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  color: var(--pipe-green-dark);
+  margin-bottom: 4px;
+}
+
+.inspector-text {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+/* ==========================================================================
+   LOWER CONTROL DECK & MACHINE DEPOT TOOLBOX
+   ========================================================================== */
+.factory-control-deck {
+  background: var(--machine-metal-base);
+  border-top: 6px solid var(--ui-ink);
+  box-shadow: inset 0 4px 0 var(--machine-metal-highlight);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  z-index: 20;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+/* Machine Depot Rack */
+.machine-depot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.depot-label {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--ui-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  letter-spacing: 0.5px;
+}
+
+.depot-slots {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.depot-card {
+  background: var(--machine-metal-dark);
+  border: 3px solid var(--ui-ink);
+  box-shadow: 
+    inset 2px 2px 0 var(--machine-metal-light),
+    inset -2px -2px 0 var(--machine-metal-shadow),
+    3px 3px 0 rgba(0,0,0,0.6);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.05s ease, background-color 0.1s;
+}
+
+.depot-card:hover:not(:disabled) {
+  background-color: var(--machine-metal-base);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 2px 2px 0 #ffffff,
+    inset -2px -2px 0 var(--machine-metal-shadow),
+    3px 5px 0 rgba(0,0,0,0.8);
+}
+
+.depot-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.depot-card-name {
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  color: var(--ui-paper);
+}
+
+/* Interactive Center Pipeline Activation Button */
+.activate-pipeline-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--btn-green-base);
+  border: 5px solid var(--ui-ink);
+  box-shadow: 
+    inset 4px 4px 0 var(--btn-green-top),
+    inset -4px -4px 0 var(--btn-green-shadow),
+    6px 6px 0 rgba(0, 0, 0, 0.8);
+  color: var(--ui-ink);
+  font-family: var(--font-game-display);
+  font-size: 15px;
+  padding: 14px 24px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+
+.activate-pipeline-button:hover:not(:disabled) {
+  background: var(--btn-green-top);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 4px 4px 0 #ffffff,
+    inset -4px -4px 0 var(--btn-green-shadow),
+    6px 8px 0 rgba(0, 0, 0, 0.9);
+}
+
+.activate-pipeline-button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 
+    inset 4px 4px 0 var(--btn-green-shadow),
+    inset -4px -4px 0 var(--btn-green-top),
+    0 0 0 #000;
+}
+
+.activate-pipeline-button.running {
+  background: var(--hazard-yellow);
+  box-shadow: inset 4px 4px 0 #ffffff, inset -4px -4px 0 #887000;
+  animation: activate-throb 0.6s infinite alternate;
+}
+
+@keyframes activate-throb {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .factory-control-deck {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .activate-pipeline-button {
+    width: 100%;
+  }
+}
+

@@ -1,0 +1,297 @@
+/* ==========================================================================
+   DEPLOYLAND MISSION SHELL & GAMEPLAY DIALOGUES
+   ========================================================================== */
+
+.mission-shell {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--world-night-sky);
+  overflow-x: hidden;
+}
+
+/* Mission Top HUD */
+.mission-hud {
+  position: relative;
+  z-index: 20;
+  background: var(--machine-metal-dark);
+  border-bottom: 4px solid var(--ui-ink);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mission-hud-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mission-district-badge {
+  background: var(--world-dirt-base);
+  border: 3px solid var(--ui-ink);
+  box-shadow: inset 2px 2px 0 var(--world-dirt-top), inset -2px -2px 0 var(--world-dirt-dark);
+  color: var(--ui-paper-warm);
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  padding: 4px 8px;
+  letter-spacing: 0.5px;
+}
+
+.mission-hud-title {
+  font-family: var(--font-game-display);
+  font-size: 13px;
+  color: var(--hazard-yellow);
+  text-shadow: 2px 2px 0 var(--ui-ink);
+  margin: 0;
+}
+
+.mission-threat-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--machine-metal-shadow);
+  border: 2px solid var(--ui-ink);
+  padding: 4px 10px;
+}
+
+.threat-label {
+  font-family: var(--font-game-display);
+  font-size: 9px;
+  color: var(--btn-red-top);
+}
+
+.threat-bar {
+  width: 70px;
+  height: 10px;
+  background: #111;
+  border: 1px solid var(--ui-ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.threat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--hazard-yellow), var(--energy-danger-red));
+  width: 80%;
+  animation: pulse-bar 1.5s infinite alternate;
+}
+
+@keyframes pulse-bar {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+/* Briefing Overlay: 16-Bit Stage Intro */
+.briefing-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 28, 0.88);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.briefing-card {
+  background: var(--machine-metal-base);
+  border: 6px solid var(--ui-ink);
+  box-shadow: 
+    inset 4px 4px 0 var(--machine-metal-highlight),
+    inset -4px -4px 0 var(--machine-metal-shadow),
+    12px 12px 0 rgba(0, 0, 0, 0.8);
+  max-width: 640px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.briefing-header {
+  background: var(--machine-metal-dark);
+  border-bottom: 4px solid var(--ui-ink);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.briefing-kicker {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--energy-active-cyan);
+  letter-spacing: 1px;
+}
+
+.briefing-stage-num {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--hazard-yellow);
+}
+
+.briefing-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.briefing-body h2 {
+  font-family: var(--font-game-display);
+  font-size: 18px;
+  color: var(--ui-paper);
+  text-shadow: 2px 2px 0 var(--ui-ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.briefing-narrative {
+  background: var(--screen-crt-bg);
+  border: 4px solid var(--ui-ink);
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,0.8);
+  padding: 16px;
+  color: var(--screen-crt-text);
+  font-family: var(--font-game-clean);
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+}
+
+.briefing-objective {
+  background: var(--casing-parchment);
+  border: 3px solid var(--ui-ink);
+  padding: 12px 16px;
+  color: var(--ui-ink);
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: bold;
+}
+
+.briefing-objective strong {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  display: block;
+  margin-bottom: 4px;
+  color: var(--world-dirt-dark);
+}
+
+.briefing-actions {
+  padding: 16px 24px 24px 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Feedback / Failure Modal */
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 28, 0.9);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.feedback-card {
+  background: var(--machine-metal-dark);
+  border: 6px solid var(--ui-ink);
+  box-shadow: 
+    inset 4px 4px 0 var(--machine-metal-light),
+    inset -4px -4px 0 var(--machine-metal-shadow),
+    12px 12px 0 rgba(0, 0, 0, 0.8);
+  max-width: 660px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.feedback-card.failure {
+  border-color: var(--energy-danger-red);
+}
+
+.feedback-card.success {
+  border-color: var(--energy-success-green);
+}
+
+.feedback-header {
+  background: var(--energy-danger-red);
+  border-bottom: 4px solid var(--ui-ink);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedback-card.success .feedback-header {
+  background: var(--energy-success-green);
+}
+
+.feedback-title {
+  font-family: var(--font-game-display);
+  font-size: 15px;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--ui-ink);
+  margin: 0;
+}
+
+.feedback-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--ui-paper);
+}
+
+.feedback-section {
+  background: #141b24;
+  border: 3px solid var(--ui-ink);
+  padding: 12px 16px;
+}
+
+.feedback-section-label {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--hazard-yellow);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.feedback-section-content {
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ui-paper);
+  white-space: pre-line;
+}
+
+.feedback-section.devops {
+  background: #192e22;
+  border-color: var(--energy-success-green);
+}
+
+.feedback-section.devops .feedback-section-label {
+  color: var(--energy-success-green);
+}
+
+.feedback-section.next {
+  background: #282012;
+  border-color: var(--hazard-yellow);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .mission-hud {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

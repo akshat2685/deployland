@@ -1,0 +1,125 @@
+{
+  "id": "cicd-09-secrets-vault",
+  "courseId": "cicd",
+  "index": 9,
+  "tier": "paid",
+  "archetype": "CLASSIFY",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "SECURITY",
+        "text": "Assets require access control. Enforce least privilege and classify sensitivity."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "SECURITY",
+        "text": "Security policy enforced. Least privilege achieved."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "SECURITY",
+        "text": "Security policy violation detected. Review your access network."
+      }
+    ]
+  },
+  "targetMisconception": "RBAC is just making sure the right people can log in.",
+  "initialState": {
+    "items": [
+      {
+        "id": "DATABASE_PASSWORD",
+        "type": "CREDENTIAL",
+        "location": "ENV",
+        "owner": "PRODUCTION",
+        "description": "Master password for the production database.",
+        "correctClassification": "SECRET",
+        "correctRoles": [
+          "OPS",
+          "ADMIN"
+        ]
+      },
+      {
+        "id": "DATABASE_HOST",
+        "type": "CONFIG",
+        "location": "ENV",
+        "owner": "PRODUCTION",
+        "description": "Internal DNS name for the database cluster.",
+        "correctClassification": "INTERNAL",
+        "correctRoles": [
+          "DEV",
+          "CI",
+          "OPS",
+          "ADMIN"
+        ]
+      },
+      {
+        "id": "DOCKER_IMAGE",
+        "type": "ARTIFACT",
+        "location": "REGISTRY",
+        "owner": "PLATFORM",
+        "description": "Compiled application binary and runtime dependencies.",
+        "correctClassification": "INTERNAL",
+        "correctRoles": [
+          "DEV",
+          "CI",
+          "OPS"
+        ]
+      },
+      {
+        "id": "DEPLOY_TOKEN",
+        "type": "CREDENTIAL",
+        "location": "VAULT",
+        "owner": "CI/CD",
+        "description": "Grants pipeline ability to mutate production infrastructure.",
+        "correctClassification": "SECRET",
+        "correctRoles": [
+          "CI",
+          "OPS"
+        ]
+      }
+    ],
+    "policies": {},
+    "outcome": "idle"
+  },
+  "palette": [],
+  "rules": [
+    "Assign classification and least-privilege roles to each asset."
+  ],
+  "win": [
+    "All items classified and authorized correctly."
+  ],
+  "fail": [
+    "A secret was exposed or a required role was denied access."
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 100,
+    "cost": 100,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 400,
+    "unlocks": [
+      "ACCESS NETWORK"
+    ],
+    "badge": "SECURITY OFFICER"
+  },
+  "engineerMode": {
+    "language": "yaml",
+    "artifact": "apiVersion: rbac.authorization.k8s.io/v1\nkind: RoleBinding\nmetadata:\n  name: ci-deployer\nsubjects:\n- kind: ServiceAccount\n  name: github-actions\nroleRef:\n  kind: Role\n  name: deployment-manager",
+    "annotation": [
+      {
+        "line": 5,
+        "text": "Service accounts (CI/CD) need explicit, tightly scoped RoleBindings."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-09",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-10-production"
+  ]
+}

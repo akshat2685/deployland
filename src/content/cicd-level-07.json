@@ -1,0 +1,89 @@
+{
+  "id": "cicd-07-blue-green",
+  "courseId": "cicd",
+  "index": 7,
+  "tier": "paid",
+  "archetype": "ALLOCATE",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "TRAFFIC COP",
+        "text": "Deploy v2.4 without downtime. Shift traffic gradually to the Green deployment."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "TRAFFIC COP",
+        "text": "Traffic shifted successfully. Zero downtime achieved."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "TRAFFIC COP",
+        "text": "You overloaded the Green deployment before scaling it."
+      }
+    ]
+  },
+  "targetMisconception": "Deployments require maintenance windows.",
+  "initialState": {
+    "targets": [
+      {
+        "id": "blue",
+        "allocation": 100,
+        "maxCapacity": 100
+      },
+      {
+        "id": "green",
+        "allocation": 0,
+        "maxCapacity": 20
+      }
+    ],
+    "totalBudget": 100,
+    "expectedTotalAllocation": 100,
+    "requiredAllocations": {
+      "blue": 0,
+      "green": 100
+    },
+    "outcome": "idle"
+  },
+  "palette": [],
+  "rules": [
+    "Shift 100% of traffic to green without dropping traffic or exceeding capacity"
+  ],
+  "win": [
+    "Traffic shifted"
+  ],
+  "fail": [
+    "Traffic dropped or overloaded"
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 100,
+    "cost": 100,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 350,
+    "unlocks": [
+      "TRAFFIC ROUTER"
+    ],
+    "badge": "ROUTING EXPERT"
+  },
+  "engineerMode": {
+    "language": "yaml",
+    "artifact": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nrules:\n  - backend:\n      service: green-svc",
+    "annotation": [
+      {
+        "line": 5,
+        "text": "Updating the ingress or load balancer routes traffic to the new version."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-07",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-08-emergency-rollback"
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "id": "cicd-05-artifact-warehouse",
+  "courseId": "cicd",
+  "index": 5,
+  "tier": "free",
+  "archetype": "CLASSIFY",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "WAREHOUSE",
+        "text": "Artifacts — the built versions of an application — are piling up in the warehouse. Someone tagged an unverified build latest and tried to send it to production. Ensure production only gets immutable, signed releases."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "WAREHOUSE",
+        "text": "Artifacts isolated. Production is now safe from untested or mutable binaries."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "WAREHOUSE",
+        "text": "A mutable or untrusted artifact leaked into the production lane. We have to rollback immediately."
+      }
+    ]
+  },
+  "targetMisconception": "Tagging 'latest' is fine for production.",
+  "palette": [],
+  "rules": [
+    "Separate immutable production artifacts from mutable development ones",
+    "Identify safe versioning and proven signatures"
+  ],
+  "win": [],
+  "fail": [],
+  "scoring": {
+    "reliability": 100,
+    "speed": 0,
+    "cost": 0,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 300,
+    "unlocks": [
+      "ARTIFACT STORE"
+    ]
+  },
+  "engineerMode": {
+    "concept": "Artifact Immutability",
+    "whatYouDid": "You analyzed artifact metadata to ensure only semantically versioned and signed builds were permitted in production.",
+    "realWorld": "In modern CI/CD, you should never deploy a mutable tag like 'latest'. Artifacts must be immutable (built once), cryptographically signed, and securely stored in an Artifact Registry before promotion.",
+    "artifact": "apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nimages:\n  - name: my-app\n    newTag: v1.4.2@sha256:8a13f...",
+    "language": "yaml",
+    "keyTakeaways": [
+      "immutable artifacts",
+      "semantic versioning",
+      "artifact registries",
+      "promotion from CI to production"
+    ]
+  },
+  "world": {
+    "district": "district-05",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-06-staging-district"
+  ],
+  "initialState": {
+    "config": {
+      "exactMatch": true,
+      "classifications": ["PROD_READY", "DEV_ONLY"],
+      "roles": ["PROMOTION_LANE", "QA_LANE", "REJECTED"],
+      "labels": {
+        "panel1": "INCOMING ARTIFACTS",
+        "panel2": "ARTIFACT INSPECTOR",
+        "panel3": "RELEASE POLICY",
+        "classification": "TARGET ENVIRONMENT",
+        "roles": "DESTINATION"
+      }
+    },
+    "items": {
+      "app-bin-882": {
+        "id": "app-bin-882",
+        "type": "Container Image",
+        "location": "registry.local/app",
+        "owner": "CI Service",
+        "description": "Latest build from main branch.",
+        "metadata": {
+          "TAG": "latest",
+          "SIGNATURE": "NONE",
+          "SOURCE": "UNKNOWN"
+        },
+        "correctClassification": "DEV_ONLY",
+        "correctRoles": ["TEST_LANE"]
+      },
+      "app-bin-883": {
+        "id": "app-bin-883",
+        "type": "Container Image",
+        "location": "registry.prod/app",
+        "owner": "Release Manager",
+        "description": "Release candidate build.",
+        "metadata": {
+          "TAG": "v1.4.2",
+          "SIGNATURE": "VERIFIED",
+          "SOURCE": "CI BUILD",
+          "BUILD": "PASS"
+        },
+        "correctClassification": "PROD_READY",
+        "correctRoles": ["PROMOTION_LANE", "TEST_LANE"]
+      },
+      "app-bin-884": {
+        "id": "app-bin-884",
+        "type": "Container Image",
+        "location": "registry.dev/app",
+        "owner": "Developer (Local)",
+        "description": "Manual build uploaded by a developer.",
+        "metadata": {
+          "TAG": "v1.4.2-dev",
+          "SIGNATURE": "INVALID",
+          "SOURCE": "LOCAL_LAPTOP",
+          "BUILD": "SKIPPED"
+        },
+        "correctClassification": "QUARANTINE",
+        "correctRoles": []
+      }
+    }
+  }
+}

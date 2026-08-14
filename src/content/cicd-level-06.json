@@ -1,0 +1,110 @@
+{
+  "id": "cicd-06-staging-district",
+  "courseId": "cicd",
+  "index": 6,
+  "tier": "free",
+  "archetype": "TRIAGE",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "CITY HALL",
+        "text": "Production just crashed immediately after the v2.1 deployment. The developers swear 'it worked on my machine' and passed Staging. Find out why it broke in Prod."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "CITY HALL",
+        "text": "Excellent diagnosis. Staging and Production had different database versions. Bypassing parity checks causes explosions."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "CITY HALL",
+        "text": "Incorrect diagnosis. Your hasty conclusion led us to rollback the wrong service. Dig deeper into the configuration logs."
+      }
+    ]
+  },
+  "targetMisconception": "If tests pass, it's safe for production.",
+  "palette": [],
+  "rules": [
+    "Investigate evidence logs across Dev, Staging, and Production",
+    "Identify the root cause of the production outage"
+  ],
+  "win": [],
+  "fail": [],
+  "scoring": {
+    "reliability": 100,
+    "speed": 0,
+    "cost": 0,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 300,
+    "unlocks": [
+      "ENVIRONMENT CONTROLLER"
+    ]
+  },
+  "engineerMode": {
+    "concept": "Environment Parity",
+    "whatYouDid": "You identified an environment drift where Production was running an older database version than Staging, causing the deployment to crash.",
+    "realWorld": "According to 12-Factor App principles, Dev, Staging, and Prod must remain as identical as possible. If Staging has DB v14 and Prod has DB v12, tests will pass in Staging but migrations or code will fail catastrophically in Prod.",
+    "artifact": "production:\n  db_version: 12.4\n  feature_flags: true\nstaging:\n  db_version: 14.1\n  feature_flags: true",
+    "language": "yaml",
+    "keyTakeaways": [
+      "environment parity",
+      "staging/UAT",
+      "configuration separation",
+      "12-factor configuration principles"
+    ]
+  },
+  "world": {
+    "district": "district-06",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-07-blue-green"
+  ],
+  "initialState": {
+    "correctRootCause": "env_drift_db",
+    "clues": [
+      {
+        "id": "dev-env",
+        "title": "DEV ENVIRONMENT CONFIG",
+        "content": "ENV: dev\nDB_ENGINE: postgres\nDB_VERSION: 14.1\nCACHE: redis\n\nSTATUS: ONLINE\nDeveloper Notes: 'Added new JSONB column for user preferences in v2.1. Works perfectly locally!'"
+      },
+      {
+        "id": "staging-env",
+        "title": "STAGING ENVIRONMENT CONFIG",
+        "content": "ENV: staging\nDB_ENGINE: postgres\nDB_VERSION: 14.1\nCACHE: redis\n\nSTATUS: ONLINE\nQA Notes: 'v2.1 deployed successfully. E2E tests passed. Sign-off for Prod.'"
+      },
+      {
+        "id": "prod-env",
+        "title": "PROD ENVIRONMENT CONFIG",
+        "content": "ENV: prod\nDB_ENGINE: postgres\nDB_VERSION: 12.4\nCACHE: redis\n\nSTATUS: CRITICAL ERROR\nAlert: High error rate (500 Internal Server Error) immediately after deployment."
+      },
+      {
+        "id": "app-logs",
+        "title": "PROD APPLICATION LOGS",
+        "content": "> Starting service v2.1\n> Connecting to DB...\n> Running DB Migrations...\n[ERROR] Migration Failed: operator does not exist: jsonb ->> unknown\n[FATAL] Unable to start service. Exiting with code 1."
+      }
+    ],
+    "possibleCauses": [
+      {
+        "id": "code_regression",
+        "title": "Code Regression in v2.1"
+      },
+      {
+        "id": "env_drift_db",
+        "title": "Environment Drift: DB Version Mismatch"
+      },
+      {
+        "id": "ci_failure",
+        "title": "CI Build Failed Mid-way"
+      },
+      {
+        "id": "cache_failure",
+        "title": "Redis Cache Connection Timeout"
+      }
+    ]
+  }
+}

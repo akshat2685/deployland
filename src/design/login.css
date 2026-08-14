@@ -1,0 +1,363 @@
+/* ==========================================================================
+   DEPLOYLAND 16-BIT OPERATOR LOGIN TERMINAL
+   ========================================================================== */
+
+.login-screen-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 50000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.login-terminal-casing {
+  position: relative;
+  width: 640px;
+  max-width: 95vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--machine-metal-dark);
+  border: 8px solid var(--ui-ink);
+  box-shadow: 
+    inset 4px 4px 0 var(--machine-metal-light),
+    inset -4px -4px 0 var(--machine-metal-shadow),
+    16px 16px 0 rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+/* Terminal Header */
+.terminal-header {
+  background: var(--ui-ink);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 4px solid var(--machine-metal-shadow);
+}
+
+.terminal-lamps {
+  display: flex;
+  gap: 8px;
+}
+.terminal-lamps .lamp {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--ui-ink);
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.6);
+}
+.terminal-lamps .lamp.red { background: var(--energy-danger-red); }
+.terminal-lamps .lamp.yellow { background: var(--hazard-yellow); }
+.terminal-lamps .lamp.green { background: var(--energy-success-green); }
+
+.terminal-title {
+  font-family: var(--font-game-display);
+  font-size: 12px;
+  color: var(--hazard-yellow);
+  letter-spacing: 1px;
+}
+
+.terminal-close-btn {
+  background: var(--energy-danger-red);
+  color: #fff;
+  border: 2px solid var(--ui-ink);
+  font-family: var(--font-game-display);
+  font-size: 12px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.terminal-close-btn:hover {
+  background: #ff6060;
+  transform: translateY(1px);
+}
+
+/* Terminal Screen Body */
+.terminal-screen-body {
+  padding: 28px 24px;
+  background: #0f1620;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.terminal-crt-overlay {
+  background: #080d14;
+  border: 4px solid var(--ui-ink);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.terminal-headline {
+  font-family: var(--font-game-display);
+  font-size: 20px;
+  color: var(--ui-paper);
+  text-shadow: 2px 2px 0 var(--ui-ink);
+  margin: 0;
+  text-align: center;
+}
+
+.terminal-subline {
+  font-family: var(--font-game-clean);
+  font-size: 15px;
+  color: var(--ui-paper-warm);
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+}
+
+/* GitHub Direct Auth */
+.github-auth-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 14px;
+  background: var(--machine-metal-shadow);
+  color: var(--ui-paper);
+  border: 4px solid var(--ui-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-light),
+    inset -3px -3px 0 #000,
+    4px 4px 0 var(--ui-ink);
+  cursor: pointer;
+}
+.github-auth-btn:hover:not(:disabled) {
+  background: var(--machine-metal-dark);
+  transform: translateY(2px) translateX(2px);
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-light),
+    inset -3px -3px 0 #000,
+    2px 2px 0 var(--ui-ink);
+}
+.git-icon {
+  font-size: 20px;
+}
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--machine-metal-light);
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  margin: 8px 0;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 2px dashed var(--machine-metal-shadow);
+}
+.auth-divider span {
+  padding: 0 12px;
+}
+
+/* Email Direct Form */
+.email-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.email-auth-form .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.email-auth-form label {
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  color: var(--energy-active-cyan);
+}
+
+.email-auth-form input {
+  padding: 12px 14px;
+  background: #141b24;
+  border: 3px solid var(--ui-ink);
+  color: var(--hazard-yellow);
+  font-family: var(--font-game-clean);
+  font-size: 16px;
+  outline: none;
+  box-shadow: inset 2px 2px 0 #000;
+}
+.email-auth-form input:focus {
+  border-color: var(--hazard-yellow);
+  background: #182230;
+}
+
+.email-submit-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 13px;
+  background: var(--btn-gold-base);
+  color: var(--ui-ink);
+  box-shadow: 
+    inset 3px 3px 0 var(--btn-gold-top),
+    inset -3px -3px 0 var(--btn-gold-shadow),
+    4px 4px 0 var(--ui-ink);
+}
+.email-submit-btn:hover:not(:disabled) {
+  background: var(--btn-gold-top);
+  transform: translateY(2px) translateX(2px);
+  box-shadow: 
+    inset 3px 3px 0 #fff,
+    inset -3px -3px 0 var(--btn-gold-shadow),
+    2px 2px 0 var(--ui-ink);
+}
+
+/* Status Message */
+.terminal-status-msg {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  padding: 8px 12px;
+  border: 2px solid var(--ui-ink);
+  text-align: center;
+}
+.terminal-status-msg.success {
+  background: rgba(56, 248, 88, 0.15);
+  color: var(--energy-success-green);
+  border-color: var(--energy-success-green);
+}
+.terminal-status-msg.error {
+  background: rgba(255, 48, 48, 0.15);
+  color: var(--energy-danger-red);
+  border-color: var(--energy-danger-red);
+}
+
+/* Guest Fallback */
+.guest-fallback-section {
+  text-align: center;
+  margin-top: 4px;
+}
+.guest-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--machine-metal-light);
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  text-decoration: underline;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.guest-link-btn:hover {
+  color: var(--hazard-yellow);
+}
+
+/* Authenticated Card */
+.authenticated-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+  padding: 16px;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid var(--energy-success-green);
+}
+.auth-status-tag {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--energy-success-green);
+}
+.auth-email-display {
+  font-family: var(--font-game-clean);
+  font-size: 18px;
+  color: var(--ui-paper);
+  font-weight: bold;
+}
+.auth-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+.auth-actions .pixel-button {
+  flex: 1;
+  padding: 12px;
+  font-size: 12px;
+}
+
+/* VIP Quick Login Card */
+.vip-quick-login-card {
+  background: rgba(248, 216, 32, 0.08);
+  border: 3px solid var(--hazard-yellow);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: inset 0 0 12px rgba(248, 216, 32, 0.2);
+}
+
+.vip-title {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--hazard-yellow);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* GitHub Selector Box */
+.gh-auth-box {
+  background: #0d141e;
+  border: 3px solid var(--energy-active-cyan);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Saved Accounts List */
+.saved-accounts-list {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px dashed var(--machine-metal-shadow);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.account-pill-btn {
+  background: var(--machine-metal-dark);
+  color: var(--machine-metal-light);
+  border: 2px solid var(--ui-ink);
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.account-pill-btn:hover {
+  background: var(--machine-metal-base);
+  color: #fff;
+}
+.account-pill-btn.vip {
+  border-color: var(--hazard-yellow);
+  color: var(--hazard-yellow);
+  background: rgba(248, 216, 32, 0.1);
+}
+.account-pill-btn.vip:hover {
+  background: var(--hazard-yellow);
+  color: #000;
+}
+
+/* Terminal Footer */
+.terminal-footer {
+  padding: 16px 24px;
+  background: var(--ui-ink);
+  display: flex;
+  justify-content: flex-end;
+  border-top: 4px solid var(--machine-metal-shadow);
+}

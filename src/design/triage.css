@@ -1,0 +1,215 @@
+/* ==========================================================================
+   DEPLOYLAND TRIAGE: 16-BIT DETECTIVE INCIDENT ROOM
+   ========================================================================== */
+
+.triage-game-container {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  gap: 16px;
+  flex: 1;
+  min-height: calc(100vh - 120px);
+  margin: 0 16px 16px 16px;
+  position: relative;
+}
+
+.triage-side-panel {
+  background: var(--machine-metal-dark);
+  border: 5px solid var(--ui-ink);
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-light),
+    inset -3px -3px 0 var(--machine-metal-shadow),
+    8px 8px 0 rgba(0, 0, 0, 0.7);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.triage-panel-title {
+  font-family: var(--font-game-display);
+  font-size: 12px;
+  color: var(--hazard-yellow);
+  border-bottom: 3px solid var(--ui-ink);
+  padding-bottom: 8px;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Left: Evidence Cartridge Bay */
+.evidence-rack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.evidence-cartridge-btn {
+  background: #202b3c;
+  border: 3px solid var(--ui-ink);
+  box-shadow: 
+    inset 2px 2px 0 var(--machine-metal-light),
+    inset -2px -2px 0 var(--machine-metal-shadow),
+    4px 4px 0 rgba(0, 0, 0, 0.6);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: transform 0.05s ease, background-color 0.1s;
+}
+
+.evidence-cartridge-btn:hover {
+  transform: translateY(-2px);
+  background: #2a384e;
+}
+
+.evidence-cartridge-btn.active {
+  border-color: var(--energy-active-cyan);
+  background: #1c3854;
+  box-shadow: 0 0 0 3px var(--energy-active-cyan), 4px 4px 0 #000;
+}
+
+.cartridge-stamp {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  background: var(--energy-success-green);
+  color: var(--ui-ink);
+  font-family: var(--font-game-display);
+  font-size: 8px;
+  padding: 2px 4px;
+  border: 1px solid var(--ui-ink);
+}
+
+/* Center: Mainframe Terminal CRT Monitor */
+.terminal-monitor-viewport {
+  background: #000;
+  border: 6px solid var(--machine-metal-base);
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.9),
+    8px 8px 0 rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-monitor-viewport::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.terminal-top-bezel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--energy-active-cyan);
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  border-bottom: 2px solid #204030;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.terminal-screen-log {
+  flex: 1;
+  overflow-y: auto;
+  color: var(--screen-crt-text);
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  line-height: 1.5;
+  padding-right: 8px;
+}
+
+.terminal-log-row {
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+.terminal-log-row.err { color: #ff5555; text-shadow: 0 0 4px rgba(255, 85, 85, 0.6); }
+.terminal-log-row.warn { color: var(--hazard-yellow); text-shadow: 0 0 4px rgba(248, 216, 32, 0.6); }
+
+/* Right: Detective Corkboard & Hypothesis Cards */
+.detective-corkboard-panel {
+  background: var(--casing-wood-base);
+  border: 5px solid var(--ui-ink);
+  box-shadow: 
+    inset 3px 3px 0 var(--casing-wood-top),
+    inset -3px -3px 0 var(--casing-wood-dark),
+    8px 8px 0 rgba(0, 0, 0, 0.7);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.hypothesis-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.detective-note-card {
+  background: var(--casing-parchment);
+  border: 2px solid var(--ui-ink);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+  padding: 12px 14px 12px 28px;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+  transition: transform 0.1s ease;
+}
+
+.detective-note-card:hover:not(:disabled) {
+  transform: translateY(-2px) rotate(-0.5deg);
+}
+
+.detective-note-card.selected {
+  transform: scale(1.03) rotate(1deg);
+  border-color: var(--energy-success-green);
+  border-width: 3px;
+  box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+}
+
+.cork-pin {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff3030;
+  border: 1px solid var(--ui-ink);
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+.detective-note-card.selected .cork-pin {
+  background: #38f858;
+}
+
+.detective-note-text {
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--ui-ink);
+  line-height: 1.3;
+}
+
+@media (max-width: 1024px) {
+  .triage-game-container {
+    grid-template-columns: 1fr;
+  }
+}

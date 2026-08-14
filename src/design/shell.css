@@ -1,4 +1,327 @@
-.shell { min-height: 100vh; overflow: hidden; padding: 16px; position: relative; }.shell .city-canvas { z-index: -3; }.shell .world-glow { z-index: -2; }
-.boot-screen { display: grid; gap: 20px; margin: 12vh auto; max-width: 720px; padding: 32px; text-align: center; }.boot-copy { color: var(--mint); font-size: 10px; letter-spacing: 2px; }.boot-copy p { color: var(--aqua); margin: 12px 0 0; }.boot-screen h1 { color: var(--white); font-size: clamp(52px, 12vw, 108px); letter-spacing: -9px; line-height: .82; margin: 8px 0; text-shadow: 8px 8px var(--pink); }.boot-screen h1 i { color: var(--cyan); font-style: normal; }.boot-story { color: var(--cream); font-size: 15px; line-height: 1.6; margin: 0 auto; max-width: 450px; }.start-control { background: var(--alert); border: 4px solid var(--cream); color: var(--void); font-weight: 900; justify-self: center; padding: 16px 24px; }.start-control:hover { background: var(--amber); }.boot-screen small { color: var(--purple); font-size: 9px; letter-spacing: 2px; }
-.map-screen { display: grid; gap: 20px; margin: 4vh auto; max-width: 1080px; }.map-hud { align-items: center; display: flex; gap: 30px; padding: 12px 16px; }.map-hud div { display: grid; gap: 4px; }.map-hud span, .map-title span, .district span { color: var(--mint); font-size: 9px; letter-spacing: 1px; }.map-hud b { color: var(--cream); font-size: 12px; }.map-hud button { background: var(--void); border: 2px solid var(--purple); color: var(--cream); font-size: 9px; margin-left: auto; padding: 8px; }.map-title h1 { color: var(--white); font-size: clamp(32px, 6vw, 64px); letter-spacing: -4px; margin: 8px 0; text-shadow: 5px 5px var(--pink); }.map-title p { color: var(--cream); margin: 0; }.district-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }.district { display: flex; flex-direction: column; min-height: 260px; padding: 20px; }.district h2 { color: var(--white); font-size: 20px; line-height: 1.2; margin: 18px 0 8px; }.district p { color: var(--cream); font-size: 12px; line-height: 1.5; }.district button { background: var(--void); border: 2px solid var(--cyan); color: var(--cyan); font-size: 10px; margin-top: auto; padding: 12px; }.district button:disabled { border-color: var(--purple); color: var(--purple); cursor: not-allowed; }.district.offline { opacity: .68; }.district.restricted { background-color: var(--violet); }.district.restricted h2 { color: var(--amber); }
-@media (max-width: 760px) { .shell { padding: 8px; }.boot-screen { margin: 8vh auto; padding: 24px 16px; }.district-grid { grid-template-columns: 1fr; }.map-hud { gap: 12px; }.map-hud button { padding: 7px; }.map-title h1 { font-size: 42px; } }
+/* ==========================================================================
+   DEPLOYLAND OVERWORLD CAMPAIGN MAP & DISTRICT LANDSCAPE
+   ========================================================================== */
+
+.shell {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background: var(--world-sky-top);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Boot Screen */
+.boot-screen {
+  margin: auto;
+  max-width: 680px;
+  width: 90%;
+  padding: 32px;
+  text-align: center;
+  background: var(--machine-metal-dark);
+  border: 6px solid var(--ui-ink);
+  box-shadow: 
+    inset 4px 4px 0 var(--machine-metal-light),
+    inset -4px -4px 0 var(--machine-metal-shadow),
+    12px 12px 0 rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.boot-copy span {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--energy-active-cyan);
+  letter-spacing: 1px;
+}
+.boot-copy p {
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  color: var(--hazard-yellow);
+  margin: 4px 0 0 0;
+}
+
+.boot-screen h1 {
+  font-family: var(--font-game-display);
+  font-size: clamp(32px, 8vw, 64px);
+  color: var(--ui-paper);
+  text-shadow: 4px 4px 0 var(--ui-ink);
+  margin: 8px 0;
+  letter-spacing: 1px;
+}
+
+.boot-screen h1 i {
+  color: var(--hazard-yellow);
+  font-style: normal;
+}
+
+.boot-story {
+  font-family: var(--font-game-clean);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ui-paper-warm);
+  max-width: 520px;
+  margin: 0 0 12px 0;
+}
+
+.start-control {
+  font-family: var(--font-game-display);
+  font-size: 16px;
+  padding: 16px 32px;
+  background: var(--btn-gold-base);
+  border: 4px solid var(--ui-ink);
+  box-shadow: 
+    inset 4px 4px 0 var(--btn-gold-top),
+    inset -4px -4px 0 var(--btn-gold-shadow),
+    6px 6px 0 rgba(0,0,0,0.8);
+  color: var(--ui-ink);
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.start-control:hover {
+  background: var(--btn-gold-top);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 4px 4px 0 #fff,
+    inset -4px -4px 0 var(--btn-gold-shadow),
+    6px 8px 0 rgba(0,0,0,0.9);
+}
+
+/* Overworld Map Screen */
+.map-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--machine-metal-dark);
+  border-bottom: 4px solid var(--ui-ink);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.5);
+  z-index: 20;
+}
+
+.map-hud-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.map-hud-stat span {
+  font-family: var(--font-game-pixel);
+  font-size: 16px;
+  color: var(--machine-metal-light);
+  line-height: 1;
+}
+
+.map-hud-stat b {
+  font-family: var(--font-game-display);
+  font-size: 13px;
+  color: var(--hazard-yellow);
+  line-height: 1;
+}
+
+/* Overworld Horizon & Scrolling Track */
+.overworld-container {
+  flex: 1;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: flex-end;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hazard-yellow) var(--machine-metal-dark);
+}
+
+.overworld-scroll-wrapper {
+  position: relative;
+  min-width: max-content;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 90px;
+}
+
+.overworld-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 90px;
+  background: var(--world-dirt-base);
+  border-top: 8px solid var(--world-grass-base);
+  box-shadow: inset 0 8px 0 var(--world-grass-top);
+  z-index: 2;
+  background-image: 
+    radial-gradient(var(--world-dirt-dark) 15%, transparent 16%),
+    radial-gradient(var(--world-dirt-dark) 15%, transparent 16%);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* Power Road Conduits */
+.overworld-road {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 14px;
+  background: #141b24;
+  border-top: 2px solid var(--ui-ink);
+  border-bottom: 2px solid var(--ui-ink);
+  background-image: repeating-linear-gradient(90deg, #141b24, #141b24 30px, var(--hazard-yellow) 30px, var(--hazard-yellow) 40px);
+}
+
+/* Buildings Track */
+.overworld-track {
+  display: flex;
+  gap: 140px;
+  padding: 0 180px;
+  position: relative;
+  z-index: 5;
+  align-items: flex-end;
+  margin-bottom: -10px;
+}
+
+/* District Landmark Node */
+.district-landmark-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: transform 0.15s ease;
+}
+
+.district-landmark-node:hover:not(:disabled) {
+  transform: translateY(-8px);
+}
+
+.district-landmark-node:disabled {
+  cursor: not-allowed;
+  filter: brightness(0.4) grayscale(0.8);
+}
+
+/* In-World District Signpost / Flag */
+.district-signpost {
+  background: var(--casing-parchment);
+  border: 3px solid var(--ui-ink);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  text-align: center;
+  white-space: nowrap;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.1s ease;
+}
+
+.district-landmark-node:hover .district-signpost {
+  transform: scale(1.08);
+}
+
+.signpost-district {
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  color: var(--world-dirt-dark);
+  margin-bottom: 2px;
+}
+
+.signpost-title {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  color: var(--ui-ink);
+}
+
+.signpost-status {
+  font-family: var(--font-game-display);
+  font-size: 9px;
+  margin-top: 4px;
+  padding: 2px 4px;
+  border: 1px solid var(--ui-ink);
+}
+.signpost-status.restored { background: var(--energy-success-green); color: var(--ui-ink); }
+.signpost-status.available { background: var(--hazard-yellow); color: var(--ui-ink); }
+.signpost-status.locked { background: var(--machine-metal-shadow); color: var(--machine-metal-light); }
+.signpost-status.restricted { background: var(--energy-danger-red); color: #fff; }
+
+/* 16-Bit District Building Sprite Graphic */
+.landmark-structure {
+  width: 140px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Active Character Engineer Avatar */
+.overworld-engineer-avatar {
+  position: absolute;
+  bottom: 0;
+  left: -48px;
+  width: 32px;
+  height: 48px;
+  background: var(--btn-gold-base);
+  border: 3px solid var(--ui-ink);
+  box-shadow: 
+    inset 2px 2px 0 var(--btn-gold-top),
+    inset -2px -2px 0 var(--btn-gold-shadow),
+    3px 3px 0 rgba(0,0,0,0.5);
+  z-index: 12;
+  animation: character-idle 0.8s steps(2, end) infinite;
+}
+
+.avatar-visor {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  width: 14px;
+  height: 8px;
+  background: var(--energy-active-cyan);
+  border: 2px solid var(--ui-ink);
+}
+
+.avatar-wrench {
+  position: absolute;
+  top: 18px;
+  right: -8px;
+  width: 6px;
+  height: 18px;
+  background: var(--machine-metal-light);
+  border: 1px solid var(--ui-ink);
+}
+
+@keyframes character-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@media (max-width: 760px) {
+  .map-hud {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .overworld-track {
+    gap: 80px;
+    padding: 0 100px;
+  }
+}

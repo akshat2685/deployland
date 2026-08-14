@@ -1,7 +1,156 @@
 :root {
-  --void: #0b0420; --deep: #1a0b33; --violet: #2d1b4e; --panel: #4a2c6d;
-  --purple: #7b2d8e; --pink: #c2379a; --alert: #ff4d80; --orange: #ff7a3d;
-  --amber: #ffb454; --cream: #ffe0a3; --aqua: #2de0d0; --mint: #4ecdc4;
-  --cyan: #7ff5ff; --white: #f2f0ff;
-  color: var(--white); background: var(--void); font-family: "Courier New", monospace;
+  /* ==========================================================================
+     DEPLOYLAND 16-BIT ADVENTURE GAME DESIGN SYSTEM
+     ========================================================================== */
+
+  /* World Environments */
+  --world-sky: #5c94fc;
+  --world-sky-top: #3b68d8;
+  --world-sky-bottom: #7ca8fc;
+  --world-cloud-white: #ffffff;
+  --world-cloud-shadow: #c8d8f8;
+  --world-grass-top: #4cd84c;
+  --world-grass-base: #28a828;
+  --world-grass-shadow: #147014;
+  --world-dirt-top: #b86820;
+  --world-dirt-base: #884410;
+  --world-dirt-dark: #582808;
+  --world-water: #2050e0;
+  --world-water-deep: #103098;
+  --world-night-sky: #0a0e1c;
+  --world-night-stars: #f8f8b8;
+
+  /* Physical Machinery & Architecture */
+  --machine-metal-highlight: #e2eaf4;
+  --machine-metal-light: #adc2d6;
+  --machine-metal-base: #647d9a;
+  --machine-metal-dark: #37475a;
+  --machine-metal-shadow: #1b242e;
+  
+  --machine-frame-edge: #0c1219;
+  --machine-rivet-light: #ffffff;
+  --machine-rivet-dark: #1e2832;
+
+  --pipe-green-top: #4de668;
+  --pipe-green-base: #1db83a;
+  --pipe-green-dark: #0f6c20;
+  --pipe-green-rim: #7ff598;
+
+  --conduit-copper-top: #f8a858;
+  --conduit-copper-base: #c86820;
+  --conduit-copper-dark: #883808;
+
+  --hazard-yellow: #f8d820;
+  --hazard-black: #141820;
+  --hazard-stripe: repeating-linear-gradient(
+    -45deg,
+    #f8d820 0px,
+    #f8d820 12px,
+    #141820 12px,
+    #141820 24px
+  );
+
+  /* Diegetic In-World Materials */
+  --casing-cream: #f6f0dd;
+  --casing-parchment: #ede3c2;
+  --casing-wood-top: #ba7d48;
+  --casing-wood-base: #8c5224;
+  --casing-wood-dark: #5a3010;
+  
+  --screen-crt-bg: #0d1a14;
+  --screen-crt-glow: #1df572;
+  --screen-crt-text: #50ff90;
+  --screen-crt-scanline: rgba(0, 0, 0, 0.35);
+
+  /* Physical UI & Bevel Colors */
+  --ui-ink: #0c1219;
+  --ui-paper: #ffffff;
+  --ui-paper-warm: #fff9e6;
+  --ui-panel-bg: #1c2738;
+  --ui-panel-top: #2c3c54;
+  --ui-panel-border: #0c1219;
+  
+  --btn-gold-top: #ffe868;
+  --btn-gold-base: #f8c820;
+  --btn-gold-bottom: #c89808;
+  --btn-gold-shadow: #705000;
+
+  --btn-blue-top: #88c0fc;
+  --btn-blue-base: #3884f8;
+  --btn-blue-bottom: #1854c8;
+  --btn-blue-shadow: #082878;
+
+  --btn-red-top: #ff7878;
+  --btn-red-base: #f83838;
+  --btn-red-bottom: #b81818;
+  --btn-red-shadow: #680808;
+
+  --btn-green-top: #88f888;
+  --btn-green-base: #30c830;
+  --btn-green-bottom: #188818;
+  --btn-green-shadow: #084808;
+
+  /* Game Status & Energy Colors */
+  --energy-active-cyan: #38e8f8;
+  --energy-active-glow: rgba(56, 232, 248, 0.6);
+  --energy-pulse-yellow: #ffee38;
+  --energy-danger-red: #ff3030;
+  --energy-success-green: #38f858;
+
+  /* Typography */
+  --font-game-display: 'Press Start 2P', monospace, sans-serif;
+  --font-game-pixel: 'VT323', monospace, sans-serif;
+  --font-game-clean: 'Courier New', Courier, Consolas, monospace;
+
+  --font-header: var(--font-game-display);
+  --font-body: var(--font-game-pixel);
+
+  /* Legacy Fallbacks for existing screens during transition */
+  --ui-border: var(--machine-metal-light);
+  --ui-highlight: var(--btn-gold-base);
+  --ui-accent: var(--btn-red-base);
+  --ui-success: var(--energy-success-green);
+  --ui-warning: var(--hazard-yellow);
+  --ui-danger: var(--energy-danger-red);
+  --ui-info: var(--world-sky);
+  --ui-panel: var(--ui-panel-bg);
+  --obj-metal-light: var(--machine-metal-light);
+  --obj-metal-base: var(--machine-metal-base);
+  --obj-metal-dark: var(--machine-metal-dark);
+  --obj-pipe: var(--pipe-green-base);
+  --obj-hazard: var(--hazard-yellow);
+  --void: var(--world-sky); 
+  --deep: var(--ui-panel-bg); 
+  --violet: var(--machine-metal-dark); 
+  --panel: var(--ui-panel-bg);
+  --purple: var(--machine-metal-light); 
+  --pink: var(--energy-active-cyan); 
+  --alert: var(--energy-danger-red); 
+  --orange: var(--conduit-copper-top);
+  --amber: var(--hazard-yellow); 
+  --cream: var(--ui-paper-warm); 
+  --aqua: var(--energy-active-cyan); 
+  --mint: var(--energy-success-green);
+  --cyan: var(--energy-active-cyan); 
+  --white: var(--ui-paper);
+
+  /* Base Document Settings */
+  color: var(--ui-paper); 
+  background-color: var(--world-sky); 
+  font-family: var(--font-game-pixel);
+  font-size: 22px;
+  line-height: 1.3;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+}
+
+h1, h2, h3, h4, h5, h6, .game-title, .pixel-heading {
+  font-family: var(--font-game-display);
+  letter-spacing: -0.5px;
+}
+
+button {
+  font-family: var(--font-game-display);
+  cursor: pointer;
+  image-rendering: pixelated;
 }

@@ -1,0 +1,158 @@
+{
+  "id": "cicd-04-build-factory",
+  "courseId": "cicd",
+  "index": 4,
+  "tier": "paid",
+  "archetype": "GRAPH_BUILD",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "FACTORY",
+        "text": "Builds are failing. Architect a reproducible continuous delivery pipeline."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "FACTORY",
+        "text": "Pipeline online. Code is successfully flowing from source to production."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "FACTORY",
+        "text": "Pipeline blocked. Invalid dependencies detected."
+      }
+    ]
+  },
+  "targetMisconception": "Pipelines are just magic scripts.",
+  "initialState": {
+    "nodes": [
+      {
+        "id": "SOURCE",
+        "type": "REPOSITORY",
+        "description": "Version control containing the raw source code."
+      },
+      {
+        "id": "BUILD",
+        "type": "COMPUTE",
+        "description": "Compiles code and installs dependencies."
+      },
+      {
+        "id": "TEST",
+        "type": "VERIFICATION",
+        "description": "Runs unit and integration tests against the built code."
+      },
+      {
+        "id": "ARTIFACT",
+        "type": "STORAGE",
+        "description": "Stores the verified, deployable binary."
+      },
+      {
+        "id": "DEPLOY",
+        "type": "ACTION",
+        "description": "Releases the artifact to the production environment."
+      },
+      {
+        "id": "DATABASE",
+        "type": "STATE",
+        "description": "Persistent data storage (Decoy node)."
+      },
+      {
+        "id": "CACHE",
+        "type": "STATE",
+        "description": "In-memory data store (Decoy node)."
+      }
+    ],
+    "edges": [],
+    "requiredPaths": [
+      {
+        "from": "SOURCE",
+        "to": "BUILD"
+      },
+      {
+        "from": "BUILD",
+        "to": "TEST"
+      },
+      {
+        "from": "TEST",
+        "to": "ARTIFACT"
+      },
+      {
+        "from": "ARTIFACT",
+        "to": "DEPLOY"
+      }
+    ],
+    "forbiddenPaths": [
+      {
+        "from": "SOURCE",
+        "to": "DEPLOY"
+      },
+      {
+        "from": "BUILD",
+        "to": "DEPLOY"
+      },
+      {
+        "from": "TEST",
+        "to": "DEPLOY"
+      },
+      {
+        "from": "SOURCE",
+        "to": "ARTIFACT"
+      }
+    ],
+    "outcome": "idle"
+  },
+  "palette": [
+    "SOURCE",
+    "BUILD",
+    "TEST",
+    "ARTIFACT",
+    "DEPLOY",
+    "DATABASE",
+    "CACHE"
+  ],
+  "rules": [
+    "Construct a valid delivery pipeline from source to deployment."
+  ],
+  "win": [
+    "All required stages present and connected in order."
+  ],
+  "fail": [
+    "Missing dependencies or invalid connections."
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 100,
+    "cost": 100,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 200,
+    "unlocks": [
+      "cicd-level-05"
+    ]
+  },
+  "engineerMode": {
+    "concept": "Reproducible Delivery",
+    "whatYouDid": "You constructed the same predictable delivery process every time.",
+    "keyTakeaways": [
+      "Declarative pipelines guarantee that deployments happen the same way every time.",
+      "Infrastructure-as-Code (IaC) prevents manual errors during deployment."
+    ],
+    "language": "yaml",
+    "artifact": "stages:\n  - build\n  - test\n  - package\n  - deploy",
+    "annotation": [
+      {
+        "line": 1,
+        "text": "A pipeline is fundamentally an ordered DAG of dependent stages."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-04",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-05-artifact-warehouse"
+  ]
+}

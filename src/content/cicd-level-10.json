@@ -1,0 +1,101 @@
+{
+  "id": "cicd-10-production-incident",
+  "courseId": "cicd",
+  "index": 10,
+  "tier": "paid",
+  "archetype": "GRAPH_BUILD",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "CITY HALL",
+        "text": "The entire city grid is offline. We have to rebuild the deployment pipeline from scratch. Construct a secure, production-safe pipeline that tests and stages changes before they reach production."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "CITY HALL",
+        "text": "Pipeline validated. Safe deployments restored across the city. You've brought order back to DeployLand."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "CITY HALL",
+        "text": "Invalid pipeline architecture. You missed a critical safety gate or bypassed staging."
+      }
+    ]
+  },
+  "targetMisconception": "You only need a build script to deploy to production.",
+  "initialState": {
+    "nodes": [
+      { "id": "SOURCE", "type": "Repository", "description": "Source code repository" },
+      { "id": "BUILD", "type": "Compute", "description": "Compiles code and builds binaries" },
+      { "id": "TEST", "type": "Verification", "description": "Runs unit and integration tests" },
+      { "id": "ARTIFACT", "type": "Registry", "description": "Stores immutable build artifacts" },
+      { "id": "STAGING", "type": "Environment", "description": "Pre-production testing environment" },
+      { "id": "PROD", "type": "Environment", "description": "Live production environment" }
+    ],
+    "requiredNodes": [
+      "SOURCE", "BUILD", "TEST", "ARTIFACT", "STAGING", "PROD"
+    ],
+    "requiredPaths": [
+      { "from": "SOURCE", "to": "BUILD" },
+      { "from": "BUILD", "to": "TEST" },
+      { "from": "TEST", "to": "ARTIFACT" },
+      { "from": "ARTIFACT", "to": "STAGING" },
+      { "from": "STAGING", "to": "PROD" }
+    ],
+    "forbiddenPaths": [
+      { "from": "SOURCE", "to": "PROD" },
+      { "from": "BUILD", "to": "PROD" },
+      { "from": "TEST", "to": "PROD" },
+      { "from": "ARTIFACT", "to": "PROD" },
+      { "from": "SOURCE", "to": "STAGING" },
+      { "from": "BUILD", "to": "STAGING" },
+      { "from": "TEST", "to": "STAGING" }
+    ],
+    "placedNodes": ["SOURCE"]
+  },
+  "palette": [
+    "BUILD", "TEST", "ARTIFACT", "STAGING", "PROD"
+  ],
+  "rules": [
+    "Place all required nodes on the floor",
+    "Connect them in a safe pipeline progression",
+    "Do not bypass testing or staging environments"
+  ],
+  "win": [
+    "Valid pipeline architecture established"
+  ],
+  "fail": [
+    "Missing safety gates",
+    "Direct deployment to production"
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 100,
+    "cost": 100,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 1000,
+    "unlocks": [
+      "MASTER ARCHITECT"
+    ],
+    "badge": "DEPLOYLAND SAVIOR"
+  },
+  "engineerMode": {
+    "language": "yaml",
+    "artifact": "stages:\n  - build\n  - test\n  - release\n  - staging\n  - production\n\ndeploy_prod:\n  stage: production\n  needs: [deploy_staging]",
+    "annotation": [
+      {
+        "line": 8,
+        "text": "Enforcing dependencies ensures staging happens before production."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-10",
+    "restoration": 10
+  },
+  "unlocksNext": []
+}

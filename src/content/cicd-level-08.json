@@ -1,0 +1,94 @@
+{
+  "id": "cicd-08-emergency-rollback",
+  "courseId": "cicd",
+  "index": 8,
+  "tier": "paid",
+  "archetype": "ALLOCATE",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "INCIDENT COMMANDER",
+        "text": "CRITICAL INCIDENT: The new Green deployment is failing under load. You have 15 seconds to scale up the old Blue environment and rollback 100% of traffic before the system collapses."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "INCIDENT COMMANDER",
+        "text": "Incident resolved. Traffic is stable on Blue. Good job under pressure."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "INCIDENT COMMANDER",
+        "text": "System collapsed. You didn't scale Blue fast enough, or you shifted traffic to an unscaled environment."
+      }
+    ]
+  },
+  "targetMisconception": "Rollbacks are a manual, slow process.",
+  "initialState": {
+    "targets": [
+      {
+        "id": "blue",
+        "allocation": 0,
+        "maxCapacity": 10
+      },
+      {
+        "id": "green",
+        "allocation": 100,
+        "maxCapacity": 10
+      }
+    ],
+    "totalBudget": 100,
+    "expectedTotalAllocation": 100,
+    "requiredAllocations": {
+      "blue": 100,
+      "green": 0
+    },
+    "timeLimit": 15,
+    "outcome": "idle"
+  },
+  "palette": [],
+  "rules": [
+    "Scale up the old Blue environment to handle 100% traffic (10 nodes)",
+    "Shift 100% of traffic from Green back to Blue",
+    "Complete the rollback before the time limit expires"
+  ],
+  "win": [
+    "Traffic shifted to Blue",
+    "Blue has sufficient capacity"
+  ],
+  "fail": [
+    "Time limit exceeded",
+    "Blue overloaded during shift"
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 100,
+    "cost": 100,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 400,
+    "unlocks": [
+      "INCIDENT COMMANDER"
+    ],
+    "badge": "ROLLBACK MASTER"
+  },
+  "engineerMode": {
+    "language": "bash",
+    "artifact": "kubectl rollout undo deployment/green-app\n# OR using a load balancer:\n# Shift traffic weights back to blue service.",
+    "annotation": [
+      {
+        "line": 1,
+        "text": "Kubernetes can instantly revert to the previous ReplicaSet."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-08",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-09-secrets-vault"
+  ]
+}

@@ -1,0 +1,227 @@
+/* ==========================================================================
+   DEPLOYLAND ALLOCATE: 16-BIT INFRASTRUCTURE & ROUTING CONTROL ROOM
+   ========================================================================== */
+
+.allocate-game-container {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 16px;
+  flex: 1;
+  min-height: calc(100vh - 120px);
+  margin: 0 16px 16px 16px;
+  position: relative;
+}
+
+.allocate-side-panel {
+  background: var(--machine-metal-dark);
+  border: 5px solid var(--ui-ink);
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-light),
+    inset -3px -3px 0 var(--machine-metal-shadow),
+    8px 8px 0 rgba(0, 0, 0, 0.7);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.allocate-panel-title {
+  font-family: var(--font-game-display);
+  font-size: 13px;
+  color: var(--hazard-yellow);
+  border-bottom: 3px solid var(--ui-ink);
+  padding-bottom: 8px;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Control Bay Card */
+.control-bay-card {
+  background: #141b24;
+  border: 3px solid var(--ui-ink);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bay-label {
+  font-family: var(--font-game-display);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+.bay-label.blue { color: var(--energy-active-cyan); }
+.bay-label.green { color: var(--energy-success-green); }
+
+.bay-readout {
+  font-family: var(--font-game-display);
+  font-size: 24px;
+  color: var(--ui-paper);
+  text-align: center;
+  background: #0c1219;
+  border: 2px solid var(--ui-ink);
+  padding: 8px;
+  text-shadow: 2px 2px 0 #000;
+}
+
+/* Center Infrastructure Floor (Server Racks & Animated Conduit) */
+.server-floor-viewport {
+  background: 
+    linear-gradient(rgba(12, 18, 25, 0.8), rgba(12, 18, 25, 0.8)),
+    repeating-linear-gradient(0deg, #182332 0px, #182332 24px, #121b27 24px, #121b27 48px);
+  border: 5px solid var(--ui-ink);
+  box-shadow: 
+    inset 0 0 16px rgba(0, 0, 0, 0.8),
+    8px 8px 0 rgba(0, 0, 0, 0.7);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Environment Zone (Blue / Green Server Clusters) */
+.cluster-zone {
+  background: var(--machine-metal-base);
+  border: 4px solid var(--ui-ink);
+  box-shadow: 
+    inset 3px 3px 0 var(--machine-metal-highlight),
+    inset -3px -3px 0 var(--machine-metal-shadow),
+    6px 6px 0 rgba(0, 0, 0, 0.6);
+  padding: 16px;
+  position: relative;
+}
+
+.cluster-zone.blue { border-left: 10px solid var(--energy-active-cyan); }
+.cluster-zone.green { border-left: 10px solid var(--energy-success-green); }
+
+.cluster-zone.overloaded {
+  border-color: var(--energy-danger-red);
+  border-left-color: var(--energy-danger-red);
+  animation: cluster-alarm 0.4s infinite alternate;
+}
+
+@keyframes cluster-alarm {
+  from { box-shadow: 0 0 0 4px var(--energy-danger-red), 6px 6px 0 #000; }
+  to { box-shadow: 0 0 0 8px var(--energy-danger-red), 6px 6px 0 #000; }
+}
+
+.cluster-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cluster-title {
+  font-family: var(--font-game-display);
+  font-size: 13px;
+  color: var(--ui-paper);
+}
+
+.cluster-status-badge {
+  font-family: var(--font-game-display);
+  font-size: 10px;
+  padding: 3px 8px;
+  border: 2px solid var(--ui-ink);
+}
+.cluster-status-badge.stable { background: var(--energy-success-green); color: var(--ui-ink); }
+.cluster-status-badge.overload { background: var(--energy-danger-red); color: #fff; animation: blink-slow 0.3s infinite; }
+
+/* Physical Server Blades Array */
+.server-rack-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  background: #0c1219;
+  border: 3px solid var(--ui-ink);
+  padding: 12px;
+  margin-bottom: 12px;
+  min-height: 84px;
+}
+
+.server-blade {
+  width: 32px;
+  height: 60px;
+  background: var(--machine-metal-dark);
+  border: 2px solid var(--ui-ink);
+  box-shadow: inset 1px 1px 0 var(--machine-metal-light), inset -1px -1px 0 var(--machine-metal-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 2px;
+  gap: 4px;
+}
+
+.server-blade.active {
+  background: var(--machine-metal-base);
+}
+
+.server-blade.overload {
+  background: #4a1818;
+  animation: blade-shake 0.15s infinite;
+}
+
+.blade-leds {
+  display: flex;
+  gap: 2px;
+}
+.blade-led {
+  width: 4px;
+  height: 4px;
+  background: #222;
+}
+.server-blade.active .blade-led { background: var(--energy-success-green); box-shadow: 0 0 3px var(--energy-success-green); }
+.server-blade.overload .blade-led { background: var(--energy-danger-red); box-shadow: 0 0 4px var(--energy-danger-red); }
+
+.blade-fan {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--ui-ink);
+  background: #111;
+  position: relative;
+  margin-top: auto;
+}
+
+.server-blade.active .blade-fan::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border-top: 2px solid var(--machine-metal-highlight);
+  animation: fan-spin 0.2s linear infinite;
+}
+
+@keyframes fan-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blade-shake {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+/* Cluster Metrics Bar */
+.cluster-metrics {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-game-clean);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--ui-paper-warm);
+}
+
+@media (max-width: 1024px) {
+  .allocate-game-container {
+    grid-template-columns: 1fr;
+  }
+}

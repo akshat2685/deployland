@@ -5,24 +5,94 @@
   "tier": "free",
   "archetype": "GRAPH_BUILD",
   "narrative": {
-    "intro": [{ "speaker": "FOREMAN NIX", "text": "The release line is dark. Build one safe path from source to production." }],
-    "success": [{ "speaker": "FOREMAN NIX", "text": "Factory restored. One artifact, tested before it reaches the city." }],
-    "failure": [{ "speaker": "FOREMAN NIX", "text": "That line cannot carry a safe release. Inspect the order and the wiring." }]
+    "intro": [
+      {
+        "speaker": "FOREMAN NIX",
+        "text": "The release line is dark. Build one safe path from source to production."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "FOREMAN NIX",
+        "text": "Factory restored. One artifact, tested before it reaches the city."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "FOREMAN NIX",
+        "text": "That line cannot carry a safe release. Inspect the order and the wiring."
+      }
+    ]
   },
   "targetMisconception": "Deployment is one action.",
   "initialState": {
-    "nodes": [], "edges": [], "runIndex": 0, "outcome": "idle",
-    "status": { "SOURCE": "idle", "BUILD": "idle", "TEST": "idle", "PACKAGE": "idle", "DEPLOY": "idle" }
+    "nodes": [],
+    "edges": [],
+    "runIndex": 0,
+    "outcome": "idle",
+    "status": {
+      "SOURCE": "idle",
+      "BUILD": "idle",
+      "TEST": "idle",
+      "PACKAGE": "idle",
+      "DEPLOY": "idle"
+    }
   },
-  "palette": ["SOURCE", "BUILD", "TEST", "PACKAGE", "DEPLOY"],
-  "rules": ["One connected release path", "SOURCE → BUILD → TEST → PACKAGE → DEPLOY"],
-  "win": ["Pipeline completes"],
-  "fail": ["Missing path", "Incorrect order"],
-  "scoring": { "reliability": 100, "speed": 80, "cost": 80, "security": 70 },
-  "rewards": { "xp": 150, "unlocks": ["BUILD NODE"], "badge": "PIPELINE UNDERSTOOD" },
+  "palette": [
+    "SOURCE",
+    "BUILD",
+    "TEST",
+    "PACKAGE",
+    "DEPLOY"
+  ],
+  "rules": [
+    "One connected release path",
+    "SOURCE → BUILD → TEST → PACKAGE → DEPLOY"
+  ],
+  "win": [
+    "Pipeline completes"
+  ],
+  "fail": [
+    "Missing path",
+    "Incorrect order"
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 80,
+    "cost": 80,
+    "security": 70
+  },
+  "rewards": {
+    "xp": 100,
+    "unlocks": [
+      "cicd-level-02"
+    ]
+  },
   "engineerMode": {
+    "concept": "Continuous Delivery",
+    "whatYouDid": "You just built a pipeline that can move a change from source to production.",
+    "keyTakeaways": [
+      "Pipelines automatically move changes through validation steps.",
+      "Continuously delivering small, validated changes is safer than large manual releases."
+    ],
     "language": "yaml",
-    "artifact": "name: release\non: [push]\njobs:\n  build:\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npm test\n      - run: npm run build\n      - run: ./deploy.sh",
-    "annotation": [{ "line": 5, "text": "A real pipeline starts from checked-out source." }, { "line": 7, "text": "Tests are a gate before packaging and deployment." }]
-  }
+    "artifact": "stages:\n  - build\n  - test\n  - deploy\n\nbuild_job:\n  stage: build\n  script:\n    - make build",
+    "annotation": [
+      {
+        "line": 5,
+        "text": "A real pipeline starts from checked-out source."
+      },
+      {
+        "line": 7,
+        "text": "Tests are a gate before packaging and deployment."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-01",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-02-continuous-integration"
+  ]
 }

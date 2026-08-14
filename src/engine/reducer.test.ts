@@ -14,7 +14,7 @@ describe('simulationReducer', () => {
     let state = simulationReducer(buildCorrectGraph(), { type: 'RUN_PIPELINE' });
     STAGES.forEach(() => { state = simulationReducer(state, { type: 'TICK' }); });
     expect(state.outcome).toBe('success');
-    expect(Object.values(state.status)).toEqual(['passed', 'passed', 'passed', 'passed', 'passed']);
+    expect(Object.values(state.status).every((status) => status === 'passed')).toBe(true);
   });
 
   it('rejects an incomplete or malformed graph before running', () => {

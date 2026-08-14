@@ -1,0 +1,124 @@
+{
+  "id": "cicd-03-test-lab",
+  "courseId": "cicd",
+  "index": 3,
+  "tier": "paid",
+  "archetype": "TRIAGE",
+  "narrative": {
+    "intro": [
+      {
+        "speaker": "TEST LAB",
+        "text": "The build succeeds, but production is blocked. Investigate the test results and find the root cause."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "TEST LAB",
+        "text": "Root cause identified. The integration tests caught a misconfigured database connection."
+      }
+    ],
+    "failure": [
+      {
+        "speaker": "TEST LAB",
+        "text": "Incorrect diagnosis. Review the logs again."
+      }
+    ]
+  },
+  "targetMisconception": "Tests just slow down the release.",
+  "initialState": {
+    "clues": [
+      {
+        "id": "build-out",
+        "title": "BUILD OUTPUT",
+        "content": "[09:40:12] npm ci\n[09:40:24] added 412 packages\n[09:40:25] npm run build\n[09:40:35] ✓ Compiled successfully\n[09:40:35] > STATUS: SUCCESS"
+      },
+      {
+        "id": "unit-tests",
+        "title": "UNIT TESTS",
+        "content": "[09:41:01] vitest run\n[09:41:02] ✓ src/math.test.ts\n[09:41:03] ✓ src/auth.test.ts\n[09:41:04] Tests: 42 passed\n[09:41:04] > STATUS: SUCCESS"
+      },
+      {
+        "id": "integration",
+        "title": "INTEGRATION LOGS",
+        "content": "TERMINAL // TEST-LAB\nCONNECTION: ACTIVE\n\n> integration_test_47\n\n[09:42:17] Starting test...\n[09:42:18] Connecting to database...\n[09:42:19] Connection timeout\n[09:42:19] RETRY 1/3\n[09:42:20] Connection timeout\n[09:42:20] RETRY 2/3\n\n> STATUS: FAILURE"
+      },
+      {
+        "id": "metrics",
+        "title": "SYSTEM METRICS",
+        "content": "DATABASE CONNECTIONS\n\nMAX: 100\nACTIVE: 100\nWAITING: 47\nSTATUS: EXHAUSTED\n\nCPU: 12%\nRAM: 41%"
+      },
+      {
+        "id": "deploy-log",
+        "title": "DEPLOYMENT LOGS",
+        "content": "DEPLOYMENT BLOCKED.\n\nIntegration tests must pass before deployment can proceed.\n\n> STATUS: ABORTED"
+      }
+    ],
+    "possibleCauses": [
+      {
+        "id": "dns",
+        "title": "DNS RESOLUTION FAILURE"
+      },
+      {
+        "id": "db-conn",
+        "title": "DATABASE CONNECTION EXHAUSTION"
+      },
+      {
+        "id": "syntax",
+        "title": "SYNTAX ERROR IN BUILD"
+      },
+      {
+        "id": "artifact",
+        "title": "MISSING CONTAINER ARTIFACT"
+      }
+    ],
+    "discoveredClues": [],
+    "selectedRootCause": null,
+    "correctRootCause": "db-conn",
+    "outcome": "idle"
+  },
+  "palette": [],
+  "rules": [
+    "Identify the root cause of the test failure"
+  ],
+  "win": [
+    "Correct root cause selected"
+  ],
+  "fail": [
+    "Incorrect root cause selected"
+  ],
+  "scoring": {
+    "reliability": 100,
+    "speed": 100,
+    "cost": 100,
+    "security": 100
+  },
+  "rewards": {
+    "xp": 150,
+    "unlocks": [
+      "cicd-level-04"
+    ]
+  },
+  "engineerMode": {
+    "concept": "CI Diagnostics & Observability",
+    "whatYouDid": "You didn't fix the code. You investigated the evidence.",
+    "keyTakeaways": [
+      "Effective CI requires accessible logs and clear test failures.",
+      "Observability allows developers to diagnose issues without SSHing into servers."
+    ],
+    "language": "bash",
+    "artifact": "npm run test:e2e\n\n> Error: ECONNREFUSED 127.0.0.1:5432\n> Check your database connection string.",
+    "annotation": [
+      {
+        "line": 3,
+        "text": "A real e2e test failure showing a database connection error."
+      }
+    ]
+  },
+  "world": {
+    "district": "district-03",
+    "restoration": 10
+  },
+  "unlocksNext": [
+    "cicd-04-build-factory"
+  ]
+}
