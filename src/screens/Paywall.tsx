@@ -4,6 +4,7 @@ import { useAuth } from '../store/auth';
 import { usePlayerStore } from '../store/player-store';
 import { analytics } from '../lib/analytics';
 import { PAYMENT_CONFIG } from '../config/payments';
+import upiQrImage from '../assets/upi-qr.jpeg';
 import '../design/paywall.css';
 
 export default function Paywall({ course, onCancel }: { course: Course, onCancel: () => void }) {
@@ -24,11 +25,6 @@ export default function Paywall({ course, onCancel }: { course: Course, onCancel
 
   const upiId = PAYMENT_CONFIG.upiId;
   const amount = PAYMENT_CONFIG.priceAmount;
-  const merchantName = PAYMENT_CONFIG.merchantName;
-
-  // Standard UPI URI format: upi://pay?pa=...&pn=...&am=...&cu=INR&tn=...
-  const upiPayload = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('DeployLand_Lifetime_Access')}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiPayload)}&color=0c1219&bgcolor=f5eed7`;
 
   const handleCopyUpi = () => {
     navigator.clipboard.writeText(upiId);
@@ -124,14 +120,13 @@ export default function Paywall({ course, onCancel }: { course: Course, onCancel
                 </div>
               </div>
 
-              {/* QR Code Graphic Box */}
+              {/* Your Exact QR Code Graphic Box */}
               <div className="upi-qr-casing">
                 <img 
-                  src={qrCodeUrl} 
-                  alt="UPI QR Scanner" 
+                  src={upiQrImage} 
+                  alt="Official Akshat Jain UPI QR Scanner" 
                   className="upi-qr-image" 
-                  width={180} 
-                  height={180} 
+                  style={{ maxWidth: '240px', width: '100%', height: 'auto', borderRadius: '4px' }}
                 />
                 <div className="qr-scan-line"></div>
               </div>
