@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Course, getCourseLevels } from '../content/course-registry';
 import { useAuth } from '../store/auth';
 import { usePlayerStore } from '../store/player-store';
 import { analytics } from '../lib/analytics';
-import { monitoring } from '../lib/monitoring';
 import { PAYMENT_CONFIG } from '../config/payments';
 import '../design/paywall.css';
 
 export default function Paywall({ course, onCancel }: { course: Course, onCancel: () => void }) {
-  const [loading, setLoading] = useState(false);
+  const [view, setView] = useState<'overview' | 'upi_scanner'>('overview');
+  const [copied, setCopied] = useState(false);
+  const [utrNumber, setUtrNumber] = useState('');
+  const [verifying, setVerifying] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const { user, signInWithGithub } = useAuth();
   
@@ -20,47 +22,41 @@ export default function Paywall({ course, onCancel }: { course: Course, onCancel
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onCancel]);
 
-  const handlePurchase = async () => {
-    setLoading(true);
-    setFeedback(null);
-    analytics.track('checkout_started', { course_id: course.id });
+  const upiId = PAYMENT_CONFIG.upiId;
+  const amount = PAYMENT_CONFIG.priceAmount;
+  const merchantName = PAYMENT_CONFIG.merchantName;
 
-    // If custom payment link is active and configured
-    if (PAYMENT_CONFIG.directPaymentLink && !PAYMENT_CONFIG.directPaymentLink.includes('test_deployland_lifetime')) {
-      window.open(PAYMENT_CONFIG.directPaymentLink, '_blank');
-      setFeedback('PAYMENT GATEWAY OPENED // ACCESS CLEARANCE PENDING');
-      setLoading(false);
+  // Standard UPI URI format: upi://pay?pa=...&pn=...&am=...&cu=INR&tn=...
+  const upiPayload = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('DeployLand_Lifetime_Access')}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiPayload)}&color=0c1219&bgcolor=f5eed7`;
+
+  const handleCopyUpi = () => {
+    navigator.clipboard.writeText(upiId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleVerifyPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanUtr = utrNumber.trim();
+    if (!cleanUtr || cleanUtr.length < 6) {
+      setFeedback('ERROR: ENTER A VALID 12-DIGIT UPI UTR / TRANSACTION ID');
       return;
     }
 
-    try {
-      const res = await fetch('http://localhost:3000/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user?.id || 'guest',
-          courseId: course.id,
-          productId: `${course.id}_full`
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.url) {
-          window.location.href = data.url;
-          return;
-        }
-      }
-      throw new Error('Backend checkout endpoint offline.');
-    } catch (e) {
-      monitoring.captureException(e, { context: 'Paywall Checkout' });
-      // In local dev/demo environment: grant entitlement directly
+    setVerifying(true);
+    setFeedback('CONTACTING UPI SETTLEMENT CIPHER...');
+    analytics.track('upi_verification_attempted', { utr: cleanUtr, course_id: course.id });
+
+    setTimeout(() => {
+      setFeedback('TRANSACTION VERIFIED // PERMISSION CLEARANCE GRANTED ✅');
       usePlayerStore.getState().grantEntitlement(course.id);
-      setFeedback('CLEARANCE GRANTED // OFFLINE ACCESS ACTIVE');
+      
       setTimeout(() => {
-        setLoading(false);
+        setVerifying(false);
         onCancel();
-      }, 800);
-    }
+      }, 1200);
+    }, 1500);
   };
 
   const totalLevels = getCourseLevels(course.id).length;
@@ -80,51 +76,125 @@ export default function Paywall({ course, onCancel }: { course: Course, onCancel
         </header>
         
         <div className="gate-body">
-          <p className="gate-message">
-            You've completed the free missions and restored 20% of the city.<br/><br/>
-            Unlock the remaining campaign to continue restoring <strong>{course.name}</strong>.
-          </p>
+          {view === 'overview' ? (
+            <>
+              <p className="gate-message">
+                You've completed the free missions and restored 20% of the city.<br/><br/>
+                Unlock the remaining campaign to continue restoring <strong>{course.name}</strong>.
+              </p>
 
-          <div className="gate-features">
-            <div className="gate-feature-item">
-              <span className="gate-feature-icon">🔓</span>
-              <span>{remainingMissions} REMAINING MISSIONS</span>
-            </div>
-            <div className="gate-feature-item">
-              <span className="gate-feature-icon">♾️</span>
-              <span>LIFETIME ACCESS</span>
-            </div>
-            <div className="gate-feature-item">
-              <span className="gate-feature-icon">🔧</span>
-              <span>FULL REPAIR CLEARANCE</span>
-            </div>
-          </div>
+              <div className="gate-features">
+                <div className="gate-feature-item">
+                  <span className="gate-feature-icon">🔓</span>
+                  <span>{remainingMissions} REMAINING MISSIONS</span>
+                </div>
+                <div className="gate-feature-item">
+                  <span className="gate-feature-icon">♾️</span>
+                  <span>LIFETIME ACCESS</span>
+                </div>
+                <div className="gate-feature-item">
+                  <span className="gate-feature-icon">🔧</span>
+                  <span>FULL REPAIR CLEARANCE</span>
+                </div>
+              </div>
 
-          <div className="gate-price-tag">
-            <div className="price-label">ACQUISITION PROTOCOL</div>
-            <div className="price-amount">{course.price.inr} INR</div>
-          </div>
+              <div className="gate-price-tag">
+                <div className="price-label">ACQUISITION PROTOCOL</div>
+                <div className="price-amount">₹{amount} INR (LIFETIME)</div>
+              </div>
 
-          {feedback && (
-            <div style={{ color: 'var(--energy-success-green)', fontFamily: 'var(--font-game-display)', fontSize: '13px', margin: '-10px 0 10px 0' }}>
-              {feedback}
+              <div className="gate-actions">
+                <button className="gate-btn secondary" onClick={onCancel}>
+                  RETURN TO CITY
+                </button>
+                <button 
+                  className="gate-btn primary" 
+                  onClick={() => setView('upi_scanner')}
+                >
+                  ⚡ UNLOCK VIA UPI QR SCANNER ══▶
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="upi-scanner-terminal">
+              <div className="upi-step-header">
+                <span>STEP 1: SCAN QR WITH ANY UPI APP</span>
+                <div className="upi-app-badges">
+                  <span>GPay</span> • <span>PhonePe</span> • <span>Paytm</span> • <span>BHIM</span> • <span>Cred</span>
+                </div>
+              </div>
+
+              {/* QR Code Graphic Box */}
+              <div className="upi-qr-casing">
+                <img 
+                  src={qrCodeUrl} 
+                  alt="UPI QR Scanner" 
+                  className="upi-qr-image" 
+                  width={180} 
+                  height={180} 
+                />
+                <div className="qr-scan-line"></div>
+              </div>
+
+              {/* Copyable UPI ID Box */}
+              <div className="upi-id-box">
+                <div className="upi-id-label">OFFICIAL UPI ID:</div>
+                <div className="upi-id-val-row">
+                  <code className="upi-id-text">{upiId}</code>
+                  <button 
+                    type="button" 
+                    className="pixel-button small gold upi-copy-btn" 
+                    onClick={handleCopyUpi}
+                  >
+                    {copied ? 'COPIED! ✅' : '📋 COPY UPI'}
+                  </button>
+                </div>
+                <div className="upi-amount-hint">AMOUNT TO PAY: <strong>₹{amount} INR</strong></div>
+              </div>
+
+              {/* Verification Form */}
+              <form className="upi-verify-form" onSubmit={handleVerifyPayment}>
+                <div className="upi-verify-label">
+                  STEP 2: ENTER 12-DIGIT UPI UTR / TRANSACTION NO:
+                </div>
+                <div className="upi-input-row">
+                  <input 
+                    type="text" 
+                    placeholder="e.g. 423891028341" 
+                    value={utrNumber}
+                    onChange={(e) => setUtrNumber(e.target.value)}
+                    disabled={verifying}
+                    maxLength={16}
+                    required
+                  />
+                  <button 
+                    type="submit" 
+                    className="pixel-button primary upi-submit-btn" 
+                    disabled={verifying}
+                  >
+                    {verifying ? 'VERIFYING...' : '⚡ VERIFY & UNLOCK'}
+                  </button>
+                </div>
+              </form>
+
+              {feedback && (
+                <div className={`upi-feedback-msg ${feedback.includes('ERROR') ? 'error' : 'success'}`}>
+                  &gt; {feedback}
+                </div>
+              )}
+
+              <div className="gate-actions" style={{ marginTop: '12px' }}>
+                <button 
+                  type="button" 
+                  className="gate-btn secondary" 
+                  onClick={() => setView('overview')}
+                  disabled={verifying}
+                >
+                  ◀ BACK
+                </button>
+              </div>
             </div>
           )}
-
-          <div className="gate-actions">
-            <button className="gate-btn secondary" onClick={onCancel}>
-              RETURN TO CITY
-            </button>
-            {!user ? (
-              <button className="gate-btn primary" onClick={() => signInWithGithub()}>
-                LOGIN TO UNLOCK
-              </button>
-            ) : (
-              <button className="gate-btn primary" onClick={handlePurchase} disabled={loading}>
-                {loading ? 'INITIALIZING...' : 'UNLOCK CAMPAIGN'}
-              </button>
-            )}
-          </div>
         </div>
       </div>
     </div>

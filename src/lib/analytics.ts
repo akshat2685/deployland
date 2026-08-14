@@ -11,6 +11,7 @@ export type AnalyticsEvent =
   | 'account_created'
   | 'paywall_viewed'
   | 'checkout_started'
+  | 'upi_verification_attempted'
   | 'purchase_completed';
 
 export interface AnalyticsContext {
