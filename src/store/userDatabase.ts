@@ -16,6 +16,9 @@ export interface UserAccount {
 const DB_KEY = 'deployland_users_db_v2';
 const SESSION_KEY = 'deployland_active_session_v2';
 
+// Protected Master Passcodes for Chief Architect (Owner)
+const CHIEF_PASSCODES = ['Akshat@2026', 'DeployLand#Chief2026', 'AkshatJainVIP', 'DEPLOY-VIP-2026'];
+
 export async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(password.trim() + '_deployland_sec_2026');
@@ -44,32 +47,43 @@ export class UserDatabase {
     return accounts.find(a => a.id === id) || null;
   }
 
+  /**
+   * Registers a brand new operator account.
+   * Strictly blocks unauthorized registration of the Chief Architect email.
+   */
   public async registerAccount(email: string, password: string, name?: string): Promise<UserAccount> {
     const cleanEmail = email.trim().toLowerCase();
-    const existing = this.getAccountByEmail(cleanEmail);
-    const passwordHash = await hashPassword(password);
-    const isVip = isLifetimeVip(cleanEmail);
+    const isVipEmail = isLifetimeVip(cleanEmail);
 
-    if (existing) {
-      existing.passwordHash = passwordHash;
-      existing.lastLoginAt = Date.now();
-      if (name) existing.name = name;
-      if (isVip) {
-        existing.isVip = true;
-        existing.entitlements = Array.from(new Set([...existing.entitlements, 'cicd']));
-      }
-      this.saveAccount(existing);
-      return existing;
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      throw new Error('INVALID_EMAIL: Enter a valid operator email address.');
+    }
+    if (!password || password.length < 4) {
+      throw new Error('WEAK_PASSWORD: Passcode must be at least 4 characters.');
     }
 
+    // Anti-Spoofing: Disallow strangers from registering the owner's email
+    if (isVipEmail) {
+      const isMasterPass = CHIEF_PASSCODES.some(p => p === password.trim());
+      if (!isMasterPass) {
+        throw new Error('RESERVED_OPERATOR: "i.jain.akshat@gmail.com" is a reserved Chief Architect callsign. Registration requires the Chief Master Passcode.');
+      }
+    }
+
+    const existing = this.getAccountByEmail(cleanEmail);
+    if (existing) {
+      throw new Error('CALLSIGN_EXISTS: An account with this email is already registered. Please sign in via Operator Login.');
+    }
+
+    const passwordHash = await hashPassword(password);
     const newAccount: UserAccount = {
       id: `usr_${btoa(cleanEmail).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12)}`,
       email: cleanEmail,
       name: name || cleanEmail.split('@')[0].toUpperCase(),
       passwordHash,
       provider: 'email',
-      isVip,
-      entitlements: isVip ? ['cicd'] : [],
+      isVip: isVipEmail,
+      entitlements: isVipEmail ? ['cicd'] : [],
       createdAt: Date.now(),
       lastLoginAt: Date.now()
     };
@@ -78,32 +92,63 @@ export class UserDatabase {
     return newAccount;
   }
 
+  /**
+   * Authenticates an existing operator with strict password verification.
+   */
   public async authenticate(email: string, password: string): Promise<UserAccount> {
     const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+    const isVipEmail = isLifetimeVip(cleanEmail);
+    const inputHash = await hashPassword(cleanPassword);
+
+    // Special verification for Chief Architect (Owner)
+    if (isVipEmail) {
+      const isMasterPass = CHIEF_PASSCODES.some(p => p === cleanPassword);
+      let account = this.getAccountByEmail(cleanEmail);
+
+      if (!account) {
+        if (!isMasterPass) {
+          throw new Error('INVALID_CREDENTIALS: Master Security Passcode required for Chief Architect callsign.');
+        }
+        // Initialize the owner account with master credentials
+        account = {
+          id: `usr_chief_akshat`,
+          email: cleanEmail,
+          name: 'CHIEF ARCHITECT AKSHAT',
+          passwordHash: inputHash,
+          provider: 'email',
+          isVip: true,
+          entitlements: ['cicd'],
+          createdAt: Date.now(),
+          lastLoginAt: Date.now()
+        };
+        this.saveAccount(account);
+        return account;
+      }
+
+      // If account exists, verify against saved hash OR valid master passcode
+      if (account.passwordHash && account.passwordHash !== inputHash && !isMasterPass) {
+        throw new Error('INVALID_CREDENTIALS: Incorrect Security Passcode for Chief Architect callsign.');
+      }
+
+      account.lastLoginAt = Date.now();
+      account.isVip = true;
+      account.entitlements = Array.from(new Set([...account.entitlements, 'cicd']));
+      this.saveAccount(account);
+      return account;
+    }
+
+    // Standard User Authentication
     const account = this.getAccountByEmail(cleanEmail);
-    const inputHash = await hashPassword(password);
-
     if (!account) {
-      // First time login for this email: register and set password securely
-      return await this.registerAccount(cleanEmail, password);
+      throw new Error('ACCOUNT_NOT_FOUND: No registered operator found with this email. Please register first.');
     }
 
-    // If account has an existing password, verify it strictly
     if (account.passwordHash && account.passwordHash !== inputHash) {
-      throw new Error('INVALID_SECURITY_CREDENTIALS: Password does not match operator record.');
-    }
-
-    // If account was created before password system, save this password as master
-    if (!account.passwordHash) {
-      account.passwordHash = inputHash;
+      throw new Error('INVALID_CREDENTIALS: Password does not match operator database record.');
     }
 
     account.lastLoginAt = Date.now();
-    if (isLifetimeVip(account.email)) {
-      account.isVip = true;
-      account.entitlements = Array.from(new Set([...account.entitlements, 'cicd']));
-    }
-
     this.saveAccount(account);
     return account;
   }

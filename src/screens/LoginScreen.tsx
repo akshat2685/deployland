@@ -52,8 +52,18 @@ export default function LoginScreen({ onBack, onSuccess }: LoginScreenProps) {
         else onBack();
       }, 700);
     } catch (err: any) {
-      const errorText = err?.message || 'ERROR: INVALID OPERATOR CREDENTIALS';
-      setStatusMsg(errorText.includes('INVALID') ? '⛔ ACCESS DENIED: INVALID SECURITY PASSCODE' : errorText);
+      const msg = err?.message || '';
+      if (msg.includes('ACCOUNT_NOT_FOUND')) {
+        setStatusMsg('❌ CALLSIGN NOT FOUND: Please click [ 📝 REGISTER NEW CALLSIGN ] first.');
+      } else if (msg.includes('RESERVED_OPERATOR')) {
+        setStatusMsg('⛔ RESERVED CALLSIGN: "i.jain.akshat@gmail.com" is reserved. Registration blocked.');
+      } else if (msg.includes('CALLSIGN_EXISTS')) {
+        setStatusMsg('⚠️ CALLSIGN ALREADY EXISTS: Please switch to [ 🔐 OPERATOR LOGIN ].');
+      } else if (msg.includes('INVALID_CREDENTIALS')) {
+        setStatusMsg('⛔ ACCESS DENIED: Invalid Security Passcode.');
+      } else {
+        setStatusMsg(msg || 'ERROR: AUTHENTICATION FAILED');
+      }
       setLoading(false);
     }
   };
